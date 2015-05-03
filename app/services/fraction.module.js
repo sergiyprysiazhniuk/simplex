@@ -13,8 +13,8 @@ angular.module("module.fraction", [])
 				}
 			}
 
-			this.numerator = numerator;
-			this.denominator = denominator || 1;
+			this.numerator = parseFloat(numerator);
+			this.denominator = parseFloat(denominator) || 1;
 		}
 
 		Fraction.prototype.toString = function(){
@@ -44,6 +44,8 @@ angular.module("module.fraction", [])
 		Fraction.prototype.add = function(fraction){
 			var scm;
 
+			fraction = toFraction(fraction);
+
 			if(!(fraction instanceof Fraction)){		
 				throw new Error(fraction + " is not a fraction");
 			}
@@ -52,13 +54,16 @@ angular.module("module.fraction", [])
 				return new Fraction(this.numerator + fraction.numerator, this.denominator).reduce();
 			}
 
-			scm = getSCM(this.denominator, fraction.denominator)
+			scm = getSCM(this.denominator, fraction.denominator);
+
 			return new Fraction((this.numerator * (scm / this.denominator)) + (fraction.numerator * (scm / fraction.denominator)),
 				scm).reduce();
 		};
 
 		Fraction.prototype.subtract = function(fraction){
 			var scm;
+
+			fraction = toFraction(fraction);
 
 			if(!(fraction instanceof Fraction)){		
 				throw new Error(fraction + " is not a fraction");
@@ -74,6 +79,7 @@ angular.module("module.fraction", [])
 		};
 
 		Fraction.prototype.multiplyBy = function(fraction){
+			fraction = toFraction(fraction);
 			if(!(fraction instanceof Fraction)){		
 				throw new Error(fraction + " is not a fraction");
 			}
@@ -82,6 +88,7 @@ angular.module("module.fraction", [])
 		};
 
 		Fraction.prototype.divideBy = function(fraction){
+			fraction = toFraction(fraction);
 			if(!(fraction instanceof Fraction)){		
 				throw new Error(fraction + " is not a fraction");
 			}
@@ -92,26 +99,27 @@ angular.module("module.fraction", [])
 		};
 
 		Fraction.prototype.equalTo = function(fraction){
+			fraction = toFraction(fraction);
 			return !this.subtract(fraction).numerator;
 		};
 
 		Fraction.prototype.moreThan = function(fraction){
+			fraction = toFraction(fraction);
 			return this.subtract(fraction).numerator > 0;
 		};
 
 		Fraction.prototype.lessThan = function(fraction){
+			fraction = toFraction(fraction);
 			return this.subtract(fraction).numerator < 0;
 		};
 
 		Fraction.prototype.moreEqualThan = function(fraction){
+			fraction = toFraction(fraction);
 			return this.subtract(fraction).numerator >= 0;
 		};
 
 		Fraction.prototype.lessEqualThan = function(fraction){
-			return this.subtract(fraction).numerator <= 0;
-		};
-
-		Fraction.prototype.parse = function(fraction){
+			fraction = toFraction(fraction);
 			return this.subtract(fraction).numerator <= 0;
 		};
 
@@ -127,6 +135,16 @@ angular.module("module.fraction", [])
 			}
 			return 0;
 		}
+
+		function toFraction(number){
+			if(number instanceof Fraction){
+				return number;
+			}
+			if(typeof number !== "number"){		
+				throw new Error(number + " is not a Number");
+			}
+			return new Fraction(number, 1);
+		};
 
 	  	return Fraction;
 	});
