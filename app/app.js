@@ -1,6 +1,6 @@
 "use strict";
 
-var app = angular.module("app", ["ngRoute", "module.start"]);
+var app = angular.module("app", ["ngRoute", "module.start", "module.appState", "module.variable"]);
 
 app
 	.config(["$routeProvider",
@@ -11,6 +11,14 @@ app
 	      })
 	      .when("/start", {
 	        templateUrl: "modules/start/start.html"
+	      })
+	      .when("/size", {
+	        templateUrl: "views/size.html",
+	        controller: "sizeCtrl"
+	      })
+	      .when("/input", {
+	        templateUrl: "views/input.html",
+	        controller: "inputCtrl"
 	      })
 	      .otherwise({
 	        redirectTo: "/"

@@ -2,6 +2,8 @@
 
 angular.module("module.fraction", [])
 	.factory("fractionFactory", function() {
+		var fractionFactory = {};
+
 		function Fraction(numerator, denominator){
 			var numbers;
 
@@ -44,7 +46,7 @@ angular.module("module.fraction", [])
 		Fraction.prototype.add = function(fraction){
 			var scm;
 
-			fraction = toFraction(fraction);
+			fraction = fractionFactory.toFraction(fraction);
 
 			if(!(fraction instanceof Fraction)){		
 				throw new Error(fraction + " is not a fraction");
@@ -63,7 +65,7 @@ angular.module("module.fraction", [])
 		Fraction.prototype.subtract = function(fraction){
 			var scm;
 
-			fraction = toFraction(fraction);
+			fraction = fractionFactory.toFraction(fraction);
 
 			if(!(fraction instanceof Fraction)){		
 				throw new Error(fraction + " is not a fraction");
@@ -79,7 +81,7 @@ angular.module("module.fraction", [])
 		};
 
 		Fraction.prototype.multiplyBy = function(fraction){
-			fraction = toFraction(fraction);
+			fraction = fractionFactory.toFraction(fraction);
 			if(!(fraction instanceof Fraction)){		
 				throw new Error(fraction + " is not a fraction");
 			}
@@ -99,27 +101,27 @@ angular.module("module.fraction", [])
 		};
 
 		Fraction.prototype.equalTo = function(fraction){
-			fraction = toFraction(fraction);
+			fraction = fractionFactory.toFraction(fraction);
 			return !this.subtract(fraction).numerator;
 		};
 
 		Fraction.prototype.moreThan = function(fraction){
-			fraction = toFraction(fraction);
+			fraction = fractionFactory.toFraction(fraction);
 			return this.subtract(fraction).numerator > 0;
 		};
 
 		Fraction.prototype.lessThan = function(fraction){
-			fraction = toFraction(fraction);
+			fraction = fractionFactory.toFraction(fraction);
 			return this.subtract(fraction).numerator < 0;
 		};
 
 		Fraction.prototype.moreEqualThan = function(fraction){
-			fraction = toFraction(fraction);
+			fraction = fractionFactory.toFraction(fraction);
 			return this.subtract(fraction).numerator >= 0;
 		};
 
 		Fraction.prototype.lessEqualThan = function(fraction){
-			fraction = toFraction(fraction);
+			fraction = fractionFactory.toFraction(fraction);
 			return this.subtract(fraction).numerator <= 0;
 		};
 
@@ -136,7 +138,7 @@ angular.module("module.fraction", [])
 			return 0;
 		}
 
-		function toFraction(number){
+		fractionFactory.toFraction = function(number){
 			if(number instanceof Fraction){
 				return number;
 			}
@@ -146,5 +148,7 @@ angular.module("module.fraction", [])
 			return new Fraction(number, 1);
 		};
 
-	  	return Fraction;
+		fractionFactory.Fraction = Fraction;
+
+	  	return fractionFactory;
 	});

@@ -1,7 +1,10 @@
 "use strict";
 
 angular.module("module.m", ["module.fraction"])
-	.factory("mFactory", ["fractionFactory", function(Fraction) {
+	.factory("mFactory", ["fractionFactory", function(fractionFactory) {
+		var mFactory = {},
+			Fraction = fractionFactory.Fraction;
+
 		function M(coefficient, summand){
 			if(arguments.length === 1){
 				var numbers = coefficient.toString().replace(/\s/g, '').split(/m/i),
@@ -38,7 +41,7 @@ angular.module("module.m", ["module.fraction"])
 		}
 
 		M.prototype.add = function(m){
-			m = toM(m);
+			m = mFactory.toM(m);
 
 			if(!(m instanceof M)){		
 				throw new Error(m + " is not a M");
@@ -48,7 +51,7 @@ angular.module("module.m", ["module.fraction"])
 		};
 
 		M.prototype.subtract = function(m){
-			m = toM(m);
+			m = mFactory.toM(m);
 
 			if(!(m instanceof M)){		
 				throw new Error(m + " is not a M");
@@ -60,7 +63,7 @@ angular.module("module.m", ["module.fraction"])
 		M.prototype.multiplyBy = function(m){
 			var product1, product2;
 
-			m = toM(m);
+			m = mFactory.toM(m);
 
 			product1 = new  M(this.coefficient.multiplyBy(m.summand), this.coefficient.multiplyBy(m.coefficient));
 			product2 = new  M(this.summand.multiplyBy(m.coefficient), this.summand.multiplyBy(m.summand));
@@ -69,37 +72,37 @@ angular.module("module.m", ["module.fraction"])
 		};
 
 		M.prototype.divideBy = function(m){
-			m = toM(m);
+			m = mFactory.toM(m);
 
 			return new  M(this.coefficient.divideBy(m.coefficient), this.summand.divideBy(m.summand));
 		};
 
 		M.prototype.equalTo = function(m){
-			m = toM(m);
+			m = mFactory.toM(m);
 			return this.coefficient.equalTo(m.coefficient) && this.summand.equalTo(m.summand);
 		};
 
 		M.prototype.moreThan = function(m){
-			m = toM(m);
+			m = mFactory.toM(m);
 
 			return this.coefficient.moreThan(m.coefficient)
 					|| (this.coefficient.equalTo(m.coefficient) && this.summand.moreThan(m.summand));
 		};
 
 		M.prototype.lessThan = function(m){
-			m = toM(m);
+			m = mFactory.toM(m);
 
 			return this.coefficient.lessThan(m.coefficient)
 					|| (this.coefficient.equalTo(m.coefficient) && this.summand.lessThan(m.summand));
 		};
 
 		M.prototype.moreEqualThan = function(m){
-			m = toM(m);
+			m = mFactory.toM(m);
 			return this.equalTo(m) || this.moreThan(m);
 		};
 
 		M.prototype.lessEqualThan = function(m){
-			m = toM(m);
+			m = mFactory.toM(m);
 			return this.equalTo(m) || this.lessThan(m);
 		};
 
@@ -130,25 +133,41 @@ angular.module("module.m", ["module.fraction"])
 			return result;
 		};
 
-		function toM(number){
+		mFactory.toM = function (number){
 			if(number instanceof M){
 				return number;
 			}else if(arguments.length === 1 && typeof number === "string"){
 				return new M(number);
 			}
 
-			return new M(toFraction(0), toFraction(number));
+			return new M(fractionFactory.toFraction(0), fractionFactory.toFraction(number));
 		};
 
-		function toFraction(number){
-			if(number instanceof Fraction){
-				return number;
-			}
-			if(typeof number !== "number"){		
-				throw new Error(number + " is not a Number");
-			}
-			return new Fraction(number, 1);
+		mFactory.min = function (elements){
+			var min = elements[0];
+
+			elements.forEach(function(element){
+				if(element.lessThan(min)){
+					min = element;
+				}
+			});
+
+			return min;
 		};
 
-	  	return M;
+		mFactory.max = function (elements){
+			var max = elements[0];
+
+			elements.forEach(function(element){
+				if(element.moreThan(max)){
+					max = element;
+				}
+			});
+
+			return max;
+		};
+
+		mFactory.M = M;
+
+	  	return mFactory;
 	}]);

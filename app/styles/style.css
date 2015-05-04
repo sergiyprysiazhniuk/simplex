@@ -1,0 +1,320 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+ul{
+	list-style: none;
+}
+body{
+	position: relative;
+    background: url("../images/background.png");
+    font-family: "Helvetica", sans-serif;
+    font-size: 17px;
+    padding-bottom: 100px;
+}
+#equations, #variables{
+    width: 60px;
+    margin: 35px auto;
+}
+#for-equations{
+    float: left;
+    margin-left: 250px;
+}
+#for-variables{
+    float: right;
+    margin-right: 250px;
+}
+#size, #data, #result{
+    padding-top: 10px;
+    width: 760px;
+    margin: 20px auto;
+    text-align: center;
+    border: 1px solid #868686;
+    border-radius: 0px;
+    background: rgba(0, 0, 0, 0.02);
+    overflow: hidden;
+}
+#size{
+    padding: 10px;
+    overflow: hidden;
+}
+table{
+    margin: 20px auto 0 auto;
+    border-collapse: collapse;
+    color: #000000;
+}
+#data table{
+	margin: 0 auto;
+}
+#result th,
+#result td:first-of-type{
+    font-family: serif;
+    font-weight: bold;
+    font-style: italic;
+}
+td, th{
+    border: 1px solid #555555;
+    padding: 7px;
+    min-width: 50px;
+    background: whitesmoke;
+}
+#data, #result{
+    padding: 10px;
+    position: relative;
+}
+#result{
+    padding-bottom: 85px;
+}
+#next{
+    margin: 65px auto 0px auto;
+}
+.ok{
+    margin: 20px auto 10px auto;
+}
+.back{
+    position: absolute;
+    bottom: 10px;
+}
+button{
+    display: block;
+	border: 1px solid #868686;
+	background: #cab0a6;
+    background: rgba(0, 0, 0, 0.2);
+	font-size: 14px;
+	cursor: pointer;
+}
+.general-button{
+    width: 110px;
+    height: 40px;
+    color: black;
+    float: right;
+}
+button:hover{
+    background: rgba(255, 255, 255, 0.4);
+}
+.limits-cell{
+    width: 45px;
+    margin: 5px 5px 5px 15px;
+}
+.vars-cell{
+    width: 65px;
+    margin: 5px 15px 5px 5px;
+}
+.fx-cell{
+    width: 45px;
+    margin: 5px 5px 5px 10px;
+}
+#limits, #function{
+    text-align: center;
+    border: 1px solid #8ad0d6;
+}
+.without-borders{
+    border: none;
+    background: none;
+}
+.around{
+    background: #ffcc88;
+}
+p{
+    margin: 10px 0;
+}
+.hidden{
+    display: none;
+}
+.visible{
+    display: block;
+}
+sub, sup{
+    font-size: 0.6em;
+}
+.limitations{
+    display: inline-block;
+    text-align: left;
+    position: relative;
+}
+.limitations:hover{
+    cursor: pointer;
+    background: rgba(220, 200, 100, 0.4);
+}
+.math{
+    font-family: serif;
+    font-style: italic;
+    font-weight: bolder;
+    font-size: 18px;
+    cursor: pointer;
+    display: inline-block;
+    padding: 0 5px;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+}
+.math:hover{
+	background: rgba(200, 200, 100, 0.1);
+	border: 1px solid #868686;
+}
+td:hover{
+    cursor: default;
+}
+td:focus{
+    cursor: text;
+}
+.recompute{
+    width: 120px;
+    height: 20px;
+    margin: -3px auto 30px auto;
+}
+
+.recompute-button{
+    min-width: 50px;
+    padding: 0 3px;
+    height: 30px;
+    display: inline-block;
+    margin: 10px 25px 0 5px;
+    border: 1px solid #5a5016;
+    border-radius: 5px;
+    background: #cab0a6;
+    color: #4a4016;
+}
+.recompute-button:hover{
+    background: -webkit-linear-gradient(top, #aaa096, #ead0a6);
+    background: -moz-linear-gradient(top, #aaa096, #ead0a6);
+    background: linear-gradient(top, #aaa096, #ead0a6);
+}
+#back{
+    display: none;
+    width: 1024px;
+    margin: -75px auto 0 auto;
+}
+.popup{
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.6);
+	z-index: 9999;
+}
+.popup .content{
+	position: absolute;
+	width: 400px;
+	height: 300px;
+	padding: 50px 50px 20px 50px;
+	background: #eeeeee;
+	top: 50%;
+	left: 50%;
+	margin-top: -200px;
+	margin-left: -175px;
+}
+.sign-op, .sign-lim{
+    margin: 0 3px;
+}
+.mistake{
+    color: #ff0000;
+    font-weight: bold;
+}
+.error-icon{
+    background-size: 32px 32px;
+}
+.limitations p{
+    margin: 2px 0;
+}
+.editable{
+	position: relative;
+    font-size: 18px;
+    border: 1px solid #aaaaaa;
+    padding: 10px;
+    background: rgba(200, 200, 100, 0.1);
+    z-index: 999;
+}
+.editable.limitations:hover{
+    background:  rgba(200, 200, 100, 0.1);;
+}
+.var-info{
+    float: right;
+    width: 100px;
+}
+.var-info + label{
+    float: left;
+}
+.table-container{
+    margin-bottom: 35px;
+}
+input{
+	width: 40px;
+	text-align: right;
+	margin: 5px 5px 5px 10px;
+}
+#result input{
+	margin: 0 0 0 5px;
+}
+.input-limitations{
+	overflow: hidden;
+	margin: 0 auto;
+	text-align: center;
+}
+.input-limitations table,
+.function table{
+	display: inline-table;
+}
+#data td{
+	border: none;
+	background: none;
+	padding: 0;
+}
+.popup ul,
+.popup li{
+	overflow: hidden;
+}
+.popup li{
+	vertical-align: middle;
+	border-bottom: 1px solid #868686;
+	padding: 8px 5px;
+}
+.popup li:last-of-type{
+	border: none;
+}
+.edited{
+	color: red;
+	font-weight: bold;
+}
+#data select{
+	margin: 5px 5px 5px 10px;
+}
+.conditions-inseparable{
+	margin-top: 20px;
+}
+#data .conditions-inseparable select{
+	margin: 5px 10px 5px 0px;
+}
+.step{
+	padding: 10px 0;
+	border-bottom: 1px solid #868686;
+	box-sizing: border-box;
+}
+.step:nth-last-of-type(2){
+	border: none;
+}
+.editable button,
+.popup button,
+.simplex-table button{
+	display: inline-block;
+	padding: 5px 15px;
+	margin: 10px 5px 0 5px;
+}
+#result .close-popup{
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	width: 25px;
+	height: 25px;
+	margin: 0;
+	background: url("../images/close.png") no-repeat center;
+	background-size: 25px 25px;
+	border: none;
+	box-sizing: border-box;
+	display: block;
+}
+.simplex-table .math{
+	display: block;
+}

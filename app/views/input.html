@@ -1,0 +1,67 @@
+<h1>Input</h1>
+
+<div id="data">
+	<h2>Система обмежень.</h2>
+	
+	<div class="input-limitations">
+		<table class="matrix-a">
+			<tr ng-repeat="row in A">
+				<td ng-repeat="variable in row">
+					<input ng-model="variable.value"/><span>{{variable.name}}<sub>{{variable.index}}</sub></span>
+				</td>
+			</tr>
+		</table>
+		<table class="signs">
+			<tr ng-repeat="sign in signs">
+				<td>
+					<select ng-model="sign.value">
+						<option ng-repeat="availableSign in availableSigns" ng-value="availableSign">{{availableSign}}</option>
+					</select>
+				</td>
+			</tr>
+		</table>
+		<table class="matrix-b">
+			<tr ng-repeat="element in B">
+				<td>
+					<input ng-model="element.value"/>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="conditions-inseparable">
+		<table>
+			<tr>
+				<td ng-repeat="condition in notNegativeConditions">
+					<span></span>
+					<select ng-model="condition.value">
+						<option ng-repeat="availableCondition in availableConditions" ng-value="availableCondition.value">{{availableCondition.label}}</option>
+					</select>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<h2>Функція цілі.</h2>
+
+	<div class="function">
+		<table>
+			<tr>
+				<td ng-repeat="variable in fx">
+					<input ng-model="variable.value"/><span>{{variable.name}}<sub>{{variable.index}}</sub></span>
+				</td>
+			</tr>
+		</table>
+		<table>
+			<tr>
+				<td>&nbsp;→&nbsp;
+				<select ng-model="extreme">
+					<option ng-repeat="value in ['min', 'max']" ng-value="value">{{value}}</option>
+				</select>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<button ng-click="next()">Далі</button>
+</div>
