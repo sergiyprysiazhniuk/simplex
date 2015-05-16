@@ -125,6 +125,10 @@ angular.module("module.fraction", [])
 			return this.subtract(fraction).numerator <= 0;
 		};
 
+		Fraction.prototype.clone = function(){
+			return new Fraction(this.numerator, this.denominator);
+		};
+
 		function getSCM(n1, n2){
 			var max = Math.max(n1, n2),
 			 	min = Math.min(n1, n2),

@@ -133,6 +133,10 @@ angular.module("module.m", ["module.fraction"])
 			return result;
 		};
 
+		M.prototype.clone = function(){
+			return new M(this.coefficient.clone(), this.summand.clone());
+		};
+
 		mFactory.toM = function (number){
 			if(number instanceof M){
 				return number;

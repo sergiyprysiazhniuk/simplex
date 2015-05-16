@@ -11,4 +11,6 @@ angular.module("module.appState", ["module.fraction", "module.m"])
 			notNegativeConditions: null,
 			extreme: 'min'
 		};
+
+		this.solvingSteps = [];
 	}]);

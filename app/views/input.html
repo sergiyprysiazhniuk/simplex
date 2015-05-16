@@ -1,5 +1,3 @@
-<h1>Input</h1>
-
 <div id="data">
 	<h2>Система обмежень.</h2>
 	
@@ -7,7 +5,7 @@
 		<table class="matrix-a">
 			<tr ng-repeat="row in A">
 				<td ng-repeat="variable in row">
-					<input ng-model="variable.value"/><span>{{variable.name}}<sub>{{variable.index}}</sub></span>
+					<input ng-model="variable.value" m-format/><span>{{variable.name}}<sub>{{variable.index}}</sub></span>
 				</td>
 			</tr>
 		</table>
@@ -23,7 +21,7 @@
 		<table class="matrix-b">
 			<tr ng-repeat="element in B">
 				<td>
-					<input ng-model="element.value"/>
+					<input ng-model="element.value" m-format/>
 				</td>
 			</tr>
 		</table>
@@ -34,9 +32,7 @@
 			<tr>
 				<td ng-repeat="condition in notNegativeConditions">
 					<span></span>
-					<select ng-model="condition.value">
-						<option ng-repeat="availableCondition in availableConditions" ng-value="availableCondition.value">{{availableCondition.label}}</option>
-					</select>
+					<select ng-model="condition.value" ng-options="availableCondition.value as availableCondition.label for availableCondition in availableConditions"></select>
 				</td>
 			</tr>
 		</table>
@@ -48,7 +44,7 @@
 		<table>
 			<tr>
 				<td ng-repeat="variable in fx">
-					<input ng-model="variable.value"/><span>{{variable.name}}<sub>{{variable.index}}</sub></span>
+					<input ng-model="variable.value" m-format/><span>{{variable.name}}<sub>{{variable.index}}</sub></span>
 				</td>
 			</tr>
 		</table>
@@ -64,4 +60,5 @@
 	</div>
 
 	<button ng-click="next()">Далі</button>
+	<button ng-click="load()">Завантажити</button>
 </div>
