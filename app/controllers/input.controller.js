@@ -13,11 +13,19 @@ angular.module("app")
 	    };
 	}])
 
-	.controller("inputCtrl", ["$scope", "$http", "appStateService", "variableFactory", "mFactory", "simplexMethodFactory",
-	 function($scope, $http, app, Variable, mFactory, SimplexMethod){
+	.controller("inputCtrl", 
+		["$scope",
+		 "$http",
+		 "appStateService",
+		 "variableFactory",
+		 "mFactory",
+		 "simplexMethodFactory",
+		 "lppImproverFactory",
+	 function($scope, $http, app, Variable, mFactory, SimplexMethod, lppImprover){
 		var m = app.inputData.m,
 			n = app.inputData.n,
-			M = mFactory.M;
+			M = mFactory.M,
+			sm;
 
 			console.log(app);		
 
@@ -26,7 +34,7 @@ angular.module("app")
 				return new Variable({
 					name: "x",
 					value: '1',
-					index: index + 1
+					index: index
 				})
 			});
 		});
@@ -43,7 +51,7 @@ angular.module("app")
 			return new Variable({
 					name: "x",
 					value: '3',
-					index: index + 1
+					index: index
 				})
 		});
 
@@ -79,7 +87,7 @@ angular.module("app")
 						return new Variable({
 							name: "x",
 							value: new M(item),
-							index: index + 1
+							index: index
 						})
 					});
 				});
@@ -96,7 +104,7 @@ angular.module("app")
 						return new Variable({
 							name: "x",
 							value: new M(item),
-							index: index + 1
+							index: index
 						})
 					});
 
@@ -107,42 +115,41 @@ angular.module("app")
 				});
 
 				$scope.extreme = data.extreme;
-
-				console.log($scope);
 			});	
 		};
 
 		$scope.load();
 
 		$scope.next = function(){
-			app.inputData.matrixA = $scope.A;
 
-			app.inputData.matrixB = $scope.B.map(function(item){
-				return item.value;
-			});
+			if(!sm){	
 
-			app.inputData.fx = $scope.fx;
+				app.inputData.matrixA = $scope.A;
 
-			app.inputData.notNegativeConditions = $scope.notNegativeConditions.map(function(item){
-				return item.value;
-			});			
+				app.inputData.matrixB = $scope.B.map(function(item){
+					return item.value;
+				});
 
-			app.inputData.signs = $scope.signs.map(function(item){
-				return item.value;
-			});
+				app.inputData.fx = $scope.fx;
+
+				app.inputData.notNegativeConditions = $scope.notNegativeConditions.map(function(item){
+					return item.value;
+				});			
+
+				app.inputData.signs = $scope.signs.map(function(item){
+					return item.value;
+				});
+				
+				app.inputData.extreme = $scope.extreme;
+
+				lppImprover.getConvenienceLpp(app.inputData);
+
+				sm = new SimplexMethod(app.inputData);
+			}
+
 			
-			app.inputData.extreme = $scope.extreme;
 
-			console.log(app.inputData);
-
-			var sm = new SimplexMethod(app.inputData);
-
-
-			console.log(">>> getBasis >>>", sm.getBasis());
-
-			var m = new M(0);
-
-			console.log(">>> M >>>", m.equalTo(0));
+			sm.next();
 		};
 
 		function generateArray(length, callback){

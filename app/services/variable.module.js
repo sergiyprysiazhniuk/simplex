@@ -6,7 +6,7 @@ angular.module("module.variable", [])
 			options = options || {};
 			this.value = options.value || '';
 			this.name = options.name || '';
-			this.index = options.index || -1;
+			this.index = options.index != null ? options.index : -1;
 		}
 
 		Variable.prototype.clone = function() {

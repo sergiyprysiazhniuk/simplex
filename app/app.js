@@ -4,9 +4,11 @@ var app = angular.module("app", [
 		"ngRoute",
 		"ui.router",
 		"module.start",
+		"module.util",
 		"module.appState",
 		"module.variable",
-		"module.simplexMethod"
+		"module.simplexMethod",
+		"module.lppImprover"
 	]);
 
 app

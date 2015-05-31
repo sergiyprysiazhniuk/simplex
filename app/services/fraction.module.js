@@ -90,7 +90,7 @@ angular.module("module.fraction", [])
 		};
 
 		Fraction.prototype.divideBy = function(fraction){
-			fraction = toFraction(fraction);
+			fraction = fractionFactory.toFraction(fraction);
 			if(!(fraction instanceof Fraction)){		
 				throw new Error(fraction + " is not a fraction");
 			}
