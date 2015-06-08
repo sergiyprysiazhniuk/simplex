@@ -1,0 +1,14 @@
+{
+	"m": 3,
+	"n": 2,
+	"matrixA": [
+		[1, 1],
+		[1, 5],
+		[2, 1]
+	],
+	"matrixB": [3, 5, 4],
+	"signs": [">", ">", ">"],
+	"notNegativeConditions": [false, false],
+	"fx": [7, 5],
+	"extreme": "max"
+}

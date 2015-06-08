@@ -4,6 +4,16 @@ angular.module("module.fraction", [])
 	.factory("fractionFactory", function() {
 		var fractionFactory = {};
 
+		fractionFactory.toFraction = function(number){
+			if(number instanceof Fraction){
+				return number;
+			}
+			/*if(typeof number !== "number"){		
+				throw new Error(number + " is not a Number");
+			}*/
+			return new Fraction(parseFloat(number), 1);
+		};
+
 		function Fraction(numerator, denominator){
 			var numbers;
 
@@ -13,10 +23,13 @@ angular.module("module.fraction", [])
 					numerator = parseFloat(numbers[0]);
 					denominator = parseFloat(numbers[1]);
 				}
+			}else if(numerator instanceof Fraction){
+				denominator = numerator.denominator;
+				numerator = numerator.numerator;
 			}
 
 			this.numerator = parseFloat(numerator);
-			this.denominator = parseFloat(denominator) || 1;
+			this.denominator = parseFloat(denominator || 1);			
 		}
 
 		Fraction.prototype.toString = function(){
@@ -142,15 +155,7 @@ angular.module("module.fraction", [])
 			return 0;
 		}
 
-		fractionFactory.toFraction = function(number){
-			if(number instanceof Fraction){
-				return number;
-			}
-			if(typeof number !== "number"){		
-				throw new Error(number + " is not a Number");
-			}
-			return new Fraction(number, 1);
-		};
+		
 
 		fractionFactory.Fraction = Fraction;
 

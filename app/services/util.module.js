@@ -6,8 +6,6 @@ angular.module("module.util", [])
 
 			    if (null == obj || "object" != typeof obj) return obj;
 
-			    // if (obj instanceof Variable) return obj.clone();
-
 			    if(obj.clone){
 			    	return obj.clone();	
 			    }

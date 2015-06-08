@@ -33,7 +33,8 @@ app
 				        controller: "inputCtrl"
 				    },
 					"result@editable": {
-						templateUrl: "views/result.html"
+						templateUrl: "views/result.html",
+				        controller: "resultCtrl"
 					}
 			    }
 			});

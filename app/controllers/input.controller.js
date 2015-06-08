@@ -24,10 +24,7 @@ angular.module("app")
 	 function($scope, $http, app, Variable, mFactory, SimplexMethod, lppImprover){
 		var m = app.inputData.m,
 			n = app.inputData.n,
-			M = mFactory.M,
-			sm;
-
-			console.log(app);		
+			M = mFactory.M;
 
 		$scope.A = generateArray(m, function(array){
 			return generateArray(n, function(array, index){
@@ -76,9 +73,9 @@ angular.module("app")
 		];
 
 		$scope.load = function(){
-			$http.get('../data/data1.json').success(function(data) {
-				var m = data.m,
-					n = data.n;	
+			$http.get('../data/p30.json').success(function(data) {
+				$scope.m = data.m,
+				$scope.n = data.n;	
 
 				$scope.data = data;
 
@@ -91,7 +88,7 @@ angular.module("app")
 						})
 					});
 				});
-				
+
 				$scope.B = data.matrixB.map(function(item){
 					return {value: new M(item)};
 				});
@@ -121,35 +118,28 @@ angular.module("app")
 		$scope.load();
 
 		$scope.next = function(){
+			app.inputData.m = $scope.m;
+			app.inputData.n = $scope.n;
 
-			if(!sm){	
+			app.inputData.matrixA = $scope.A;
 
-				app.inputData.matrixA = $scope.A;
+			app.inputData.matrixB = $scope.B.map(function(item){
+				return item.value;
+			});
 
-				app.inputData.matrixB = $scope.B.map(function(item){
-					return item.value;
-				});
+			app.inputData.fx = $scope.fx;
 
-				app.inputData.fx = $scope.fx;
+			app.inputData.notNegativeConditions = $scope.notNegativeConditions.map(function(item){
+				return item.value;
+			});			
 
-				app.inputData.notNegativeConditions = $scope.notNegativeConditions.map(function(item){
-					return item.value;
-				});			
-
-				app.inputData.signs = $scope.signs.map(function(item){
-					return item.value;
-				});
-				
-				app.inputData.extreme = $scope.extreme;
-
-				lppImprover.getConvenienceLpp(app.inputData);
-
-				sm = new SimplexMethod(app.inputData);
-			}
-
+			app.inputData.signs = $scope.signs.map(function(item){
+				return item.value;
+			});
 			
+			app.inputData.extreme = $scope.extreme;
 
-			sm.next();
+			app.start();
 		};
 
 		function generateArray(length, callback){

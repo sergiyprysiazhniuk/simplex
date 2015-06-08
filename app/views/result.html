@@ -2,6 +2,45 @@
 	<h2>Result</h2>
 
 	<div class="step">
-		<div ui-view="simplex"></div>
+		<div class="simplex-table">
+				<table ng-repeat="step in steps">
+					<thead>
+						<tr>
+							<th></th>
+							<th ng-repeat="variable in step.data.lpp.fx">
+								{{variable.name}}<sub>{{variable.index + 1}}</sub>
+							</th>
+							<th>b<sub>i</sub></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="row in step.data.lpp.matrixA">
+							<td>
+								{{step.data.basis[$index].basisVariable.name}}
+								<sub>{{step.data.basis[$index].basisVariable.index + 1}}</sub>
+							</td>
+							<td ng-repeat="variable in row" 
+								ng-class="{around: step.data.solvingElement.rowIndex === $parent.$index && step.data.solvingElement.colIndex === $index}" contenteditable>{{variable.value.toString()}}</td>
+							<td contenteditable>
+								{{step.data.lpp.matrixB[$index].toString()}}
+							</td>
+							<td ng-if="step.type === 'first-simplex-table'">
+								{{step.data.lpp.fx[step.data.basis[$index].basisVariable._index].value.toString()}}
+							</td>
+						</tr>
+						<tr>
+							<td>f(x)</td>
+							<td ng-repeat="value in step.data.lpp.matrixC" contenteditable>{{value.toString()}}</td>
+							<td contenteditable>{{step.data.anglePoint.value.toString()}}</td>
+						</tr>
+						<tr ng-if="step.type === 'first-simplex-table'">
+							<td class="without-borders"></td>
+							<td ng-repeat="variable in step.data.lpp.fx">{{variable.value.toString()}}</td>
+						</tr>
+					</tbody>
+				</table>
+				<p class="math"></p>
+				<button>OK</button>
+			</div>
 	</div>
 </div>

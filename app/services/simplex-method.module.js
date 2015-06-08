@@ -8,22 +8,34 @@ angular.module("module.simplexMethod", [
 		var M = mFactory.M;
 
 		function SimplexMethod(lpp){
-			this.lpp = lpp;
-			this.basis = this.getBasis();
-			this.anglePoint = this._getAnglePoint();
-			this.lpp.matrixC = this._getMatrixC();
-			this.solvingElement = this.getSolvingElement();
+			if(lpp){
+				this.lpp = util.clone(lpp);
+				this.basis = this.getBasis();
+				this.anglePoint = this._getAnglePoint();
+				this.lpp.matrixC = this._getMatrixC();
+				this.solvingElement = this.getSolvingElement();
+			}			
 		}
 
 		SimplexMethod.prototype.next = function(){
-			if(this._isImprovable()){
-				this.buildTable();
+			this.buildTable();
 
-				if(this._containsPositiveMark()){
-					this.updateBasis();
-					this.updateSolvingElement();
-				}
+			if(this.isImprovable()){
+				this.updateSolvingElement();
+				this.updateBasis();
+			}else{
+				this.solvingElement = null;
 			}
+		};
+
+		SimplexMethod.prototype.clone = function(){
+			var copy = new SimplexMethod();
+
+			Object.keys(this).forEach(function(key){
+				copy[key] = util.clone(this[key]);
+			}, this);
+
+			return copy;
 		};
 
 		SimplexMethod.prototype.getBasis = function(){	
@@ -37,6 +49,7 @@ angular.module("module.simplexMethod", [
 				return {
 					limitation: limitationIndex,
 					basisVariable: {
+						_index: limitation.indexOf(variable),
 						index: variable.index,
 						name: variable.name,
 						value: this.lpp.matrixB[limitationIndex]
@@ -56,7 +69,8 @@ angular.module("module.simplexMethod", [
 			this.basis.splice(row, 1, {
 				limitation: row,
 				basisVariable: {
-					index: col,
+					_index: col,
+					index: this.lpp.matrixA[row][col].index,
 					name: this.lpp.matrixA[row][col].name,
 					value: this.lpp.matrixB[row]
 				}
@@ -83,9 +97,9 @@ angular.module("module.simplexMethod", [
 			this._excludeVariableFromColumn(this.solvingElement.colIndex);		
 		};
 
-		SimplexMethod.prototype.clone = function(){
+		/*SimplexMethod.prototype.clone = function(){
 			return util.clone(this);
-		};
+		};*/
 
 		SimplexMethod.prototype._excludeVariableFromColumn = function(colIndex){
 			this.lpp.matrixA.forEach(function(row, rowIndex, matrix){
@@ -129,7 +143,7 @@ angular.module("module.simplexMethod", [
 			}).length;
 		};
 
-		SimplexMethod.prototype._isImprovable = function(){
+		SimplexMethod.prototype.isImprovable = function(){
 			return this._containsPositiveMark() && !!this._getPositiveMarks().filter(function(item){
 				return this._getMatrixAColumn(this.lpp.matrixC.indexOf(item)).filter(function(item){
 					return item.value.moreThan(0);
@@ -185,15 +199,15 @@ angular.module("module.simplexMethod", [
 			return this.lpp.fx.map(function(variable, variableIndex, fx){
 				return this._getMatrixAColumn(variableIndex).reduce(function(previous, current, index){
 					return current.value
-						.multiplyBy(fx[basis[index].basisVariable.index].value)
-						.add(previous); 
+						.multiplyBy(fx[basis[index].basisVariable._index].value)
+				 		.add(previous); 
 				}, 0).subtract(fx[variableIndex].value);
 			}, this);
 		};
 
 		SimplexMethod.prototype._getAnglePoint = function() {
 			var basisIndexes = this.getBasis().map(function(element){
-					return element.basisVariable.index;
+					return element.basisVariable._index;
 				}),
 
 				vector = this.lpp.fx.map(function(variable, index){

@@ -1,0 +1,15 @@
+{
+	"m": 4,
+	"n": 3,
+	"matrixA": [
+		[3, -2, 1],
+		[1, 1, 1],
+		[5, -1, 1],
+		[2, 1, -1]
+	],
+	"matrixB": [2, 4, 3, 1],
+	"signs": ["<", ">", ">", "<"],
+	"notNegativeConditions": [true, true, true],
+	"fx": [-1, -1, 1],
+	"extreme": "min"
+}

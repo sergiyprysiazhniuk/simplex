@@ -35,8 +35,8 @@ angular.module("module.m", ["module.fraction"])
 					this.summand = new Fraction(_summand);
 				}
 			}else{
-				this.coefficient = coefficient;
-				this.summand = summand;
+				this.coefficient = new Fraction(coefficient);
+				this.summand = new Fraction(summand);
 			}			
 		}
 
@@ -73,7 +73,6 @@ angular.module("module.m", ["module.fraction"])
 
 		M.prototype.divideBy = function(m){
 			m = mFactory.toM(m);
-
 			return new  M(this.coefficient.divideBy(m.coefficient), this.summand.divideBy(m.summand));
 		};
 

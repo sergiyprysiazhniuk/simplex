@@ -1,0 +1,42 @@
+{
+	"minimizeGoalFunction": {
+		"improved": false,
+		"message": "Перевіряємо чи мінімізується функція цілі. У нашому виладку вона максимізується, тому домножимо її на -1"
+	},
+	"allFreeMembersNotNegative": {
+		"improved": false,
+		"message": "Перевіряємо чи всі вільні члени є невід'ємними"
+	},
+	"limitationsLessEqual": {
+		"improved": false,
+		"message": ""
+	},
+	"limitationsMoreEqual": {
+		"improved": false,
+		"message": ""
+	},
+	"equations": {
+		"improved": false,
+		"message": ""
+	},
+	"limitationsMoreEqualAndEqual": {
+		"improved": false,
+		"message": ""
+	},
+	"addAdditionalVariables": {
+		"improved": false,
+		"message": ""
+	},
+	"subtractAdditionalVariables": {
+		"improved": false,
+		"message": ""
+	},
+	"addFakeVariables": {
+		"improved": false,
+		"message": ""
+	},
+	"_": {
+		"improved": false,
+		"message": ""
+	}
+}
