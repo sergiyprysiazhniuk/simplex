@@ -1,28 +1,30 @@
 "use strict";
 
-angular.module("module.lppImprover", ["module.util", "module.variable", "module.m", "module.simplexMethod"])
-	.factory("lppImproverFactory", ["utilFactory", "variableFactory", "mFactory", function(util, Variable, mFactory) {
-		var M = mFactory.M;
+angular.module("module.lppImprover")
+	.factory("lppImproverFactory", ["improvementStateFactory", "utilFactory", "variableFactory", "mFactory",
+	 function(improvementState, util, Variable, mFactory) {
+		var M = mFactory.M,
+			steps = [];
 
 		function next(lpp){
-			
+			// improvementState.getStepData("limitations-more-equal-and-equal")
 		}
 
-		function getConvenienceLpp(rawLpp){
+		function getConvenienceLpp(rawLpp, saveState){
 			var lpp = util.clone(rawLpp);
 
 			lpp.improvementData = {};
 			
-			!isMinimized(lpp) && normalizeFunction(lpp);
-			!isPositiveAllFreeMembers(lpp) && normalizeFreeMembers(lpp);
-			(!isAllEquations(lpp) || !isSingleBasisMatrix(lpp)) && normalizeLimitations(lpp);
-			!containsNegativeVariables(lpp) && normalizeNegativeVariables(lpp);
+			!isMinimized(lpp) && normalizeFunction(lpp, saveState);
+			!isPositiveAllFreeMembers(lpp) && normalizeFreeMembers(lpp, saveState);
+			(!isAllEquations(lpp) || !isSingleBasisMatrix(lpp)) && normalizeLimitations(lpp, saveState);
+			!containsNegativeVariables(lpp) && normalizeNegativeVariables(lpp, saveState);
 
 			return lpp;
 			console.log(lpp);
 		};
 
-		function normalizeNegativeVariables(lpp){
+		function normalizeNegativeVariables(lpp, saveState){
 			var k = 0;
 
 			lpp.notNegativeConditions.forEach(function(isPositive, index){
@@ -52,6 +54,9 @@ angular.module("module.lppImprover", ["module.util", "module.variable", "module.
 					k++;
 				}
 			});
+
+			lpp.improvementData.stepInfo = improvementState.getStepData('replace-variables');
+			saveState && saveState(lpp, 'limitations');
 		}
 
 		function containsNegativeVariables(lpp){
@@ -68,7 +73,7 @@ angular.module("module.lppImprover", ["module.util", "module.variable", "module.
 			}
 		}
 
-		function normalizeLimitations(lpp){
+		function normalizeLimitations(lpp, saveState){
 			var equalIndexes = lpp.signs.map(indexOfValue("=")).filter(moreEqualZero),
 				lessIndexes = lpp.signs.map(indexOfValue("<")).filter(moreEqualZero),
 				moreIndexes = lpp.signs.map(indexOfValue(">")).filter(moreEqualZero);
@@ -76,21 +81,38 @@ angular.module("module.lppImprover", ["module.util", "module.variable", "module.
 				lpp.improvementData.originalSigns = util.clone(lpp.signs);
 
 				if(lessIndexes.length){
+					lpp.improvementData.stepInfo = improvementState.getStepData('limitations-less-equal');
+					saveState && saveState(lpp, 'header');
+
 					addAdditionalVariables(lpp, lessIndexes, 1);
+
+					lpp.improvementData.stepInfo = improvementState.getStepData('add-additional-variables-less-equal-limitations');
+					saveState && saveState(lpp, 'limitations');
 				}
 				if(equalIndexes.length && !moreIndexes.length){
+					lpp.improvementData.stepInfo = improvementState.getStepData('equations');
+					saveState && saveState(lpp, 'header');
+
 					addFakeVariables(lpp, equalIndexes, 1);
+
+					lpp.improvementData.stepInfo = improvementState.getStepData('add-fake-variables-equations');
+					saveState && saveState(lpp, 'limitations');
 				}
 				if(moreIndexes.length && !equalIndexes.length){
-					normalizeLimitationsMoreEqual(lpp, moreIndexes);
+					lpp.improvementData.stepInfo = improvementState.getStepData('limitations-more-equal');
+					saveState && saveState(lpp, 'header');
+
+					normalizeLimitationsMoreEqual(lpp, moreIndexes, saveState);
 				}
 				if(moreIndexes.length && equalIndexes.length){
-					console.log("---normalizeLimitations---");
-					normalizeEquationsAndMoreEqual(lpp, equalIndexes, moreIndexes);
+					lpp.improvementData.stepInfo = improvementState.getStepData('limitations-more-equal-and-equal');
+					saveState && saveState(lpp, 'header');
+
+					normalizeEquationsAndMoreEqual(lpp, equalIndexes, moreIndexes, saveState);
 				}
 		}		
 
-		function normalizeEquationsAndMoreEqual(lpp, equations, limitations){
+		function normalizeEquationsAndMoreEqual(lpp, equations, limitations, saveState){
 			var isAllEquationsEqualZero = lpp.matrixB.filter(function(item, index){
 					return equations.indexOf(index) > -1;	
 				}).every(function(item){
@@ -99,15 +121,42 @@ angular.module("module.lppImprover", ["module.util", "module.variable", "module.
 				markedLimitation;
 
 			if(isAllEquationsEqualZero){
+				/*lpp.improvementData.stepInfo = improvementState.getStepData('equations');
+				saveState && saveState(lpp, 'header');*/
+
 				addFakeVariables(lpp, equations, 1);
+
+				lpp.improvementData.stepInfo = improvementState.getStepData('add-fake-variables-equations');
+				saveState && saveState(lpp, 'limitations');
+
+				/*lpp.improvementData.stepInfo = improvementState.getStepData('limitations-more-equal');
+				saveState && saveState(lpp, 'header');*/
+
 				normalizeLimitationsMoreEqual(lpp, limitations);
-			}else{
-				
+			}else{				
+				lpp.improvementData.stepInfo = improvementState.getStepData('limitations-more-equal');
+				saveState && saveState(lpp, 'header');
+
 				markedLimitation = getLimitationWithMaxFreeMember(lpp, equations);
 				divideLimitations(lpp, limitations, markedLimitation);
+
+				lpp.improvementData.stepInfo = improvementState.getStepData('divide-limitations-more-and-equal');
+				saveState && saveState(lpp, 'limitations');
+
 				addAdditionalVariables(lpp, limitations, -1);
+
+				lpp.improvementData.stepInfo = improvementState.getStepData('subtract-additional-variables-more-and-equal');
+				saveState && saveState(lpp, 'limitations');
+
 				subtractLimitations(lpp, markedLimitation, limitations);
+
+				lpp.improvementData.stepInfo = improvementState.getStepData('subtract-equations-more-and-equal');
+				saveState && saveState(lpp, 'limitations');
+
 				addFakeVariables(lpp, [markedLimitation], 1);
+
+				lpp.improvementData.stepInfo = improvementState.getStepData('add-fake-variables-more-and-equal');
+				saveState && saveState(lpp, 'limitations');
 			}
 		}
 
@@ -131,15 +180,24 @@ angular.module("module.lppImprover", ["module.util", "module.variable", "module.
 			});
 		}
 
-		function normalizeLimitationsMoreEqual(lpp, limitations){
+		function normalizeLimitationsMoreEqual(lpp, limitations, saveState){
 			var markedLimitation = getLimitationWithMaxFreeMember(lpp, limitations);
 
 			addAdditionalVariables(lpp, limitations, -1);
 
+			lpp.improvementData.stepInfo = improvementState.getStepData('subtract-additional-variables-limitations-more-equal');
+			saveState && saveState(lpp, 'limitations');
+
 			limitations.splice(limitations.indexOf(markedLimitation), 1);
 			subtractLimitations(lpp, markedLimitation, limitations);
 
+			lpp.improvementData.stepInfo = improvementState.getStepData('subtract-equations-limitations-more-equal');
+			saveState && saveState(lpp, 'limitations');
+
 			addFakeVariables(lpp, [markedLimitation], 1);
+
+			lpp.improvementData.stepInfo = improvementState.getStepData('add-fake-variable-limitations-more-equal');
+			saveState && saveState(lpp, 'limitations');
 		}
 
 		function getLimitationWithMaxFreeMember(lpp, limitations){
@@ -221,16 +279,19 @@ angular.module("module.lppImprover", ["module.util", "module.variable", "module.
 			});
 		}
 
-		function normalizeFunction(lpp){			
+		function normalizeFunction(lpp, saveState){			
 			lpp.improvementData.originalExtreme = lpp.extreme;
 			lpp.extreme = "min";
 			lpp.fx = lpp.fx.map(function(variable){
 				variable.value = variable.value.multiplyBy(-1)
 				return variable;
-			});			
+			});		
+
+			lpp.improvementData.stepInfo = improvementState.getStepData('minimize-goal-function');
+			saveState && saveState(lpp, 'goal-function');	
 		}
 
-		function normalizeFreeMembers(lpp){
+		function normalizeFreeMembers(lpp, saveState){
 			var negativeIndexes = lpp.matrixB.map(function(item, index){
 				return item.lessThan(0) ? index : -1;
 			}).filter(function(item){
@@ -257,6 +318,9 @@ angular.module("module.lppImprover", ["module.util", "module.variable", "module.
 			function invertSign(sign, index){
 				return sign !== "="	? (sign === ">" ? "<" : ">") : "="; 
 			}
+
+			lpp.improvementData.stepInfo = improvementState.getStepData('all-free-members-not-negative');
+			saveState && saveState(lpp, 'limitations');
 		}
 
 		function isConvenientLpp(lpp){

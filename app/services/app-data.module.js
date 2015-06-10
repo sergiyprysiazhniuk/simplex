@@ -1,7 +1,7 @@
 angular.module("module.appState", ["module.fraction", "module.m"])
 
-	.service("appStateService", ["variableFactory", "mFactory", "simplexMethodFactory", "lppImproverFactory", 
-	function(Variable, mFactory, SimplexMethod, lppImprover){
+	.service("appStateService", ["utilFactory", "variableFactory", "mFactory", "simplexMethodFactory", "lppImproverFactory", 
+	function(util, Variable, mFactory, SimplexMethod, lppImprover){
 		var M = mFactory.M;
 
 		this.inputData = {
@@ -18,7 +18,16 @@ angular.module("module.appState", ["module.fraction", "module.m"])
 		this.solvingSteps = [];
 
 		this.start = function(){
-			var sm = new SimplexMethod(lppImprover.getConvenienceLpp(this.inputData));
+			var that = this;
+
+			lppImprover.next();
+
+			var sm = new SimplexMethod(lppImprover.getConvenienceLpp(this.inputData, function(lpp, type){
+				that.solvingSteps.push({
+					type: type,
+					data: util.clone(lpp)
+				});
+			}));
 
 			this.solvingSteps.push({
 				type: "first-simplex-table",

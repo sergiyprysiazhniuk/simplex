@@ -9,34 +9,66 @@
 	},
 	"limitationsLessEqual": {
 		"improved": false,
-		"message": ""
-	},
-	"limitationsMoreEqual": {
-		"improved": false,
-		"message": ""
+		"message": "limitationsLessEqual",
+		"substeps": {
+			"addAdditionalVariables": {
+				"improved": false,
+				"message": "addAdditionalVariables"
+			}
+		}
 	},
 	"equations": {
 		"improved": false,
-		"message": ""
+		"message": "equations",
+		"substeps": {
+			"addFakeVariables": {
+				"improved": false,
+				"message": "addFakeVariables"
+			}
+		}
+	},
+	"limitationsMoreEqual": {
+		"improved": false,
+		"message": "limitationsMoreEqual",
+		"substeps": {
+			"subtractAdditionalVariables": {
+				"improved": false,
+				"message": "subtractAdditionalVariables"
+			},
+			"subtractEquations": {
+				"improved": false,
+				"message": "subtractEquations"
+			},
+			"addFakeVariable": {
+				"improved": false,
+				"message": "addFakeVariable"
+			}
+		}
 	},
 	"limitationsMoreEqualAndEqual": {
 		"improved": false,
-		"message": ""
+		"message": "",
+		"substeps": {
+			"divideLimitations": {
+				"improved": false,
+				"message": "divideLimitations"
+			},
+			"subtractAdditionalVariables": {
+				"improved": false,
+				"message": "subtractAdditionalVariables"
+			},
+			"subtractEquations": {
+				"improved": false,
+				"message": "subtractEquations"
+			},
+			"addFakeVariables": {
+				"improved": false,
+				"message": "addFakeVariables"
+			}
+		}
 	},
-	"addAdditionalVariables": {
+	"replaceVariables": {
 		"improved": false,
-		"message": ""
-	},
-	"subtractAdditionalVariables": {
-		"improved": false,
-		"message": ""
-	},
-	"addFakeVariables": {
-		"improved": false,
-		"message": ""
-	},
-	"_": {
-		"improved": false,
-		"message": ""
+		"message": "replaceVariables"
 	}
 }
