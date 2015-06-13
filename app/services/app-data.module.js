@@ -16,24 +16,14 @@ angular.module("module.appState", ["module.fraction", "module.m"])
 		};
 
 		this.solvingSteps = [];
+		this.improvementSteps = [];
 
-		this.start = function(){
-			var that = this;
+		this.recalculateTable = function(sm){
 
-			lppImprover.next();
+		};
 
-			var sm = new SimplexMethod(lppImprover.getConvenienceLpp(this.inputData, function(lpp, type){
-				that.solvingSteps.push({
-					type: type,
-					data: util.clone(lpp)
-				});
-			}));
-
-			this.solvingSteps.push({
-				type: "first-simplex-table",
-				data: sm.clone()
-			});
-
+		this.generateTables = function(sm){
+			console.log("sm.isImprovable()", sm.isImprovable());
 			while(sm.isImprovable()){
 				sm.next();
 				this.solvingSteps.push({
@@ -41,8 +31,25 @@ angular.module("module.appState", ["module.fraction", "module.m"])
 					data: sm.clone()
 				});
 			}
+		};
 
-			console.log("CLONE", this.solvingSteps);
+		this.start = function(){
+			var that = this,
+				sm = new SimplexMethod(lppImprover.getConvenienceLpp(this.inputData, function(lpp, type){
+					that.improvementSteps.push({
+						type: type,
+						data: util.clone(lpp)
+					});
+				}));
 
+			this.solvingSteps.push({
+				type: "first-simplex-table",
+				data: sm.clone()
+			});
+
+			this.generateTables(sm);
+
+			console.log("improvementSteps", this.improvementSteps);
+			console.log("solvingSteps", this.solvingSteps);
 		}
 	}]);

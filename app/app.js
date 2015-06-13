@@ -3,6 +3,7 @@
 var app = angular.module("app", [
 		"ngRoute",
 		"ui.router",
+		"contenteditable",
 		"module.start",
 		"module.util",
 		"module.appState",

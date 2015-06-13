@@ -55,8 +55,14 @@ angular.module("module.lppImprover")
 				}
 			});
 
-			lpp.improvementData.stepInfo = improvementState.getStepData('replace-variables');
-			saveState && saveState(lpp, 'limitations');
+			addStepInformation(lpp, 'limitations', 'replace-variables', saveState);
+		}
+
+		function addStepInformation(lpp, type, step, callback){
+			if(callback){
+				lpp.improvementData.stepInfo = improvementState.getStepData(step);
+				callback(lpp, type);
+			}			
 		}
 
 		function containsNegativeVariables(lpp){
@@ -81,33 +87,21 @@ angular.module("module.lppImprover")
 				lpp.improvementData.originalSigns = util.clone(lpp.signs);
 
 				if(lessIndexes.length){
-					lpp.improvementData.stepInfo = improvementState.getStepData('limitations-less-equal');
-					saveState && saveState(lpp, 'header');
-
+					addStepInformation(lpp, 'header', 'limitations-less-equal', saveState);
 					addAdditionalVariables(lpp, lessIndexes, 1);
-
-					lpp.improvementData.stepInfo = improvementState.getStepData('add-additional-variables-less-equal-limitations');
-					saveState && saveState(lpp, 'limitations');
+					addStepInformation(lpp, 'limitations', 'add-additional-variables-less-equal-limitations', saveState);
 				}
 				if(equalIndexes.length && !moreIndexes.length){
-					lpp.improvementData.stepInfo = improvementState.getStepData('equations');
-					saveState && saveState(lpp, 'header');
-
+					addStepInformation(lpp, 'header', 'equations', saveState);
 					addFakeVariables(lpp, equalIndexes, 1);
-
-					lpp.improvementData.stepInfo = improvementState.getStepData('add-fake-variables-equations');
-					saveState && saveState(lpp, 'limitations');
+					addStepInformation(lpp, 'limitations', 'add-fake-variables-equations', saveState);
 				}
 				if(moreIndexes.length && !equalIndexes.length){
-					lpp.improvementData.stepInfo = improvementState.getStepData('limitations-more-equal');
-					saveState && saveState(lpp, 'header');
-
+					addStepInformation(lpp, 'header', 'limitations-more-equal', saveState);
 					normalizeLimitationsMoreEqual(lpp, moreIndexes, saveState);
 				}
 				if(moreIndexes.length && equalIndexes.length){
-					lpp.improvementData.stepInfo = improvementState.getStepData('limitations-more-equal-and-equal');
-					saveState && saveState(lpp, 'header');
-
+					addStepInformation(lpp, 'header', 'limitations-more-equal-and-equal', saveState);
 					normalizeEquationsAndMoreEqual(lpp, equalIndexes, moreIndexes, saveState);
 				}
 		}		
@@ -121,42 +115,26 @@ angular.module("module.lppImprover")
 				markedLimitation;
 
 			if(isAllEquationsEqualZero){
-				/*lpp.improvementData.stepInfo = improvementState.getStepData('equations');
-				saveState && saveState(lpp, 'header');*/
-
 				addFakeVariables(lpp, equations, 1);
-
-				lpp.improvementData.stepInfo = improvementState.getStepData('add-fake-variables-equations');
-				saveState && saveState(lpp, 'limitations');
-
-				/*lpp.improvementData.stepInfo = improvementState.getStepData('limitations-more-equal');
-				saveState && saveState(lpp, 'header');*/
-
+				addStepInformation(lpp, 'limitations', 'add-fake-variables-equations', saveState);
 				normalizeLimitationsMoreEqual(lpp, limitations);
 			}else{				
-				lpp.improvementData.stepInfo = improvementState.getStepData('limitations-more-equal');
-				saveState && saveState(lpp, 'header');
-
 				markedLimitation = getLimitationWithMaxFreeMember(lpp, equations);
 				divideLimitations(lpp, limitations, markedLimitation);
 
-				lpp.improvementData.stepInfo = improvementState.getStepData('divide-limitations-more-and-equal');
-				saveState && saveState(lpp, 'limitations');
+				addStepInformation(lpp, 'limitations', 'divide-limitations-more-and-equal', saveState);
 
 				addAdditionalVariables(lpp, limitations, -1);
 
-				lpp.improvementData.stepInfo = improvementState.getStepData('subtract-additional-variables-more-and-equal');
-				saveState && saveState(lpp, 'limitations');
+				addStepInformation(lpp, 'limitations', 'subtract-additional-variables-more-and-equal', saveState);
 
 				subtractLimitations(lpp, markedLimitation, limitations);
 
-				lpp.improvementData.stepInfo = improvementState.getStepData('subtract-equations-more-and-equal');
-				saveState && saveState(lpp, 'limitations');
+				addStepInformation(lpp, 'limitations', 'subtract-equations-more-and-equal', saveState);
 
 				addFakeVariables(lpp, [markedLimitation], 1);
 
-				lpp.improvementData.stepInfo = improvementState.getStepData('add-fake-variables-more-and-equal');
-				saveState && saveState(lpp, 'limitations');
+				addStepInformation(lpp, 'limitations', 'add-fake-variables-more-and-equal', saveState);
 			}
 		}
 
@@ -185,19 +163,16 @@ angular.module("module.lppImprover")
 
 			addAdditionalVariables(lpp, limitations, -1);
 
-			lpp.improvementData.stepInfo = improvementState.getStepData('subtract-additional-variables-limitations-more-equal');
-			saveState && saveState(lpp, 'limitations');
+			addStepInformation(lpp, 'limitations', 'subtract-additional-variables-limitations-more-equal', saveState);
 
 			limitations.splice(limitations.indexOf(markedLimitation), 1);
 			subtractLimitations(lpp, markedLimitation, limitations);
 
-			lpp.improvementData.stepInfo = improvementState.getStepData('subtract-equations-limitations-more-equal');
-			saveState && saveState(lpp, 'limitations');
+			addStepInformation(lpp, 'limitations', 'subtract-equations-limitations-more-equal', saveState);
 
 			addFakeVariables(lpp, [markedLimitation], 1);
 
-			lpp.improvementData.stepInfo = improvementState.getStepData('add-fake-variable-limitations-more-equal');
-			saveState && saveState(lpp, 'limitations');
+			addStepInformation(lpp, 'limitations', 'add-fake-variable-limitations-more-equal', saveState);
 		}
 
 		function getLimitationWithMaxFreeMember(lpp, limitations){
@@ -287,8 +262,7 @@ angular.module("module.lppImprover")
 				return variable;
 			});		
 
-			lpp.improvementData.stepInfo = improvementState.getStepData('minimize-goal-function');
-			saveState && saveState(lpp, 'goal-function');	
+			addStepInformation(lpp, 'goal-function', 'minimize-goal-function', saveState);
 		}
 
 		function normalizeFreeMembers(lpp, saveState){
@@ -319,8 +293,7 @@ angular.module("module.lppImprover")
 				return sign !== "="	? (sign === ">" ? "<" : ">") : "="; 
 			}
 
-			lpp.improvementData.stepInfo = improvementState.getStepData('all-free-members-not-negative');
-			saveState && saveState(lpp, 'limitations');
+			addStepInformation(lpp, 'limitations', 'all-free-members-not-negative', saveState);
 		}
 
 		function isConvenientLpp(lpp){

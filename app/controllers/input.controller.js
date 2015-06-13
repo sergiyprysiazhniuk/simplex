@@ -73,7 +73,7 @@ angular.module("app")
 		];
 
 		$scope.load = function(){
-			$http.get('../data/p30.json').success(function(data) {
+			$http.get('../data/p35.json').success(function(data) {
 				$scope.m = data.m,
 				$scope.n = data.n;	
 

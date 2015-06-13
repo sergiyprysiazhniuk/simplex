@@ -1,9 +1,38 @@
 <div id="result">
 	<h2>Result</h2>
 
-	<div class="step">
+	<div class="step" ng-repeat="step in improvementSteps">
+		<p>{{step.data.improvementData.stepInfo.message}}</p>
+		<div ng-if="step.type === 'goal-function'">
+			<p class="math">
+					<span>f(x)=</span>
+					<span ng-repeat="variable in step.data.fx | filter:notZero">
+						{{variable.value | variable:$index}}{{variable.name}}<sub>{{variable.index + 1}}</sub>
+					</span>
+					<span> → min</span>
+				</p>
+		</div>
+
+		<div ng-if="step.type === 'limitations'">
+			<div ng-repeat="row in step.data.matrixA">
+				<p class="math">
+					<span ng-repeat="variable in row | filter:notZero">
+						{{variable.value | variable:$index}}{{variable.name}}<sub>{{variable.index + 1}}</sub>
+					</span>
+					<span>{{step.data.signs[$index] | sign}}</span>
+					<span>{{step.data.matrixB[$index].toString()}}</span>
+				</p>
+			</div>			
+		</div>
+	</div>
+
+
+
+
+
+	<div class="step" ng-repeat="step in solvingSteps">
 		<div class="simplex-table">
-				<table ng-repeat="step in steps">
+				<table>
 					<thead>
 						<tr>
 							<th></th>
@@ -19,9 +48,13 @@
 								{{step.data.basis[$index].basisVariable.name}}
 								<sub>{{step.data.basis[$index].basisVariable.index + 1}}</sub>
 							</td>
-							<td ng-repeat="variable in row" 
+							<td ng-repeat="variable in row"
+								ng-model="variable.value"
+								m-format
 								ng-class="{around: step.data.solvingElement.rowIndex === $parent.$index && step.data.solvingElement.colIndex === $index}" contenteditable>{{variable.value.toString()}}</td>
-							<td contenteditable>
+							<td contenteditable 
+								ng-model="step.data.lpp.matrixB[$index]"
+								m-format>
 								{{step.data.lpp.matrixB[$index].toString()}}
 							</td>
 							<td ng-if="step.type === 'first-simplex-table'">
@@ -30,8 +63,14 @@
 						</tr>
 						<tr>
 							<td>f(x)</td>
-							<td ng-repeat="value in step.data.lpp.matrixC" contenteditable>{{value.toString()}}</td>
-							<td contenteditable>{{step.data.anglePoint.value.toString()}}</td>
+							<td ng-repeat="value in step.data.lpp.fx"
+								contenteditable
+								ng-model="step.data.lpp.matrixC[$index]"
+								m-format
+								>{{step.data.lpp.matrixC[$index].toString()}}</td>
+							<td ng-model="step.data.anglePoint.value"
+								m-format
+								contenteditable="true">{{step.data.anglePoint.value.toString()}}</td>
 						</tr>
 						<tr ng-if="step.type === 'first-simplex-table'">
 							<td class="without-borders"></td>
@@ -40,7 +79,7 @@
 					</tbody>
 				</table>
 				<p class="math"></p>
-				<button>OK</button>
+				<button ng-click="recalculateTable()">OK</button>
 			</div>
 	</div>
 </div>

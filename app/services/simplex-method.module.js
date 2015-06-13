@@ -144,11 +144,16 @@ angular.module("module.simplexMethod", [
 		};
 
 		SimplexMethod.prototype.isImprovable = function(){
-			return this._containsPositiveMark() && !!this._getPositiveMarks().filter(function(item){
+			/*return this._containsPositiveMark() && !!this._getPositiveMarks().filter(function(item){
 				return this._getMatrixAColumn(this.lpp.matrixC.indexOf(item)).filter(function(item){
 					return item.value.moreThan(0);
 				}).length;
-			}, this).length;
+			}, this).length;*/
+			return this._containsPositiveMark() && this._getPositiveMarks().every(function(item){
+				return this._getMatrixAColumn(this.lpp.matrixC.indexOf(item)).some(function(item){
+					return item.value.moreThan(0);
+				});
+			}, this);
 		};
 
 		SimplexMethod.prototype._getPositiveMarks = function(){
