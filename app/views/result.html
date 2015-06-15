@@ -83,8 +83,6 @@
 	</div>
 
 
-
-
 	<div class="step" ng-repeat="step in solvingSteps">
 		<div class="simplex-table">
 				<table>
@@ -138,5 +136,10 @@
 				<p class="math"></p>
 				<button ng-click="recalculateTable()">OK</button>
 			</div>
+	</div>
+
+	<div class="step" ng-repeat="step in resultSteps">
+		<p>{{step.message}}</p>
+		<p>{{}}</p>
 	</div>
 </div>

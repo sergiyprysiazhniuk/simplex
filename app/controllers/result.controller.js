@@ -116,6 +116,7 @@ angular.module("app")
 
 			$scope.improvementSteps = app.improvementSteps;
 			$scope.solvingSteps = app.solvingSteps;
+			$scope.resultSteps = app.resultSteps;
 
 			$scope.cancelEdit = function(){
 				this.editMode = false;

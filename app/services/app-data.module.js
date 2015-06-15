@@ -1,7 +1,13 @@
 angular.module("module.appState", ["module.fraction", "module.m"])
 
-	.service("appStateService", ["utilFactory", "variableFactory", "mFactory", "simplexMethodFactory", "lppImproverFactory", 
-	function(util, Variable, mFactory, SimplexMethod, lppImprover){
+	.service("appStateService", [
+		"utilFactory",
+		"variableFactory", 
+		"mFactory", 
+		"simplexMethodFactory", 
+		"lppImproverFactory", 
+		"resultAnalyzerFactory",
+	function(util, Variable, mFactory, SimplexMethod, lppImprover, resultAnalyzer){
 		var M = mFactory.M;
 
 		this.inputData = {
@@ -17,6 +23,7 @@ angular.module("module.appState", ["module.fraction", "module.m"])
 
 		this.solvingSteps = [];
 		this.improvementSteps = [];
+		this.resultSteps = [];
 
 		this.recalculateTable = function(sm){
 
@@ -39,7 +46,8 @@ angular.module("module.appState", ["module.fraction", "module.m"])
 						type: type,
 						data: util.clone(lpp)
 					});
-				}));
+				})),
+				resultSteps;
 
 			this.solvingSteps.push({
 				type: "first-simplex-table",
@@ -47,6 +55,23 @@ angular.module("module.appState", ["module.fraction", "module.m"])
 			});
 
 			this.generateTables(sm);
+
+			resultSteps = resultAnalyzer.getResultSteps(this.solvingSteps[this.solvingSteps.length - 1].data);
+
+			// this.resultSteps = resultSteps;
+			resultSteps.forEach(function(step){
+				this.resultSteps.push(step);
+			}, this);
+		};
+
+		this.updateResultSteps = function(){
+			var resultSteps = resultAnalyzer.getResultSteps(this.solvingSteps[this.solvingSteps.length - 1].data);
+
+			this.resultSteps = [];
+
+			resultSteps.forEach(function(step){
+				this.resultSteps.push(step);
+			}, this);
 		};
 
 		this.start = function(){
@@ -54,5 +79,6 @@ angular.module("module.appState", ["module.fraction", "module.m"])
 
 			console.log("improvementSteps", this.improvementSteps);
 			console.log("solvingSteps", this.solvingSteps);
+			console.log("this.resultSteps", this.resultSteps);
 		}
 	}]);

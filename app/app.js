@@ -9,7 +9,8 @@ var app = angular.module("app", [
 		"module.appState",
 		"module.variable",
 		"module.simplexMethod",
-		"module.lppImprover"
+		"module.lppImprover",
+		"module.resultAnalyzer"
 	]);
 
 app
