@@ -23,7 +23,6 @@ angular.module("module.appState", ["module.fraction", "module.m"])
 		};
 
 		this.generateTables = function(sm){
-			console.log("sm.isImprovable()", sm.isImprovable());
 			while(sm.isImprovable()){
 				sm.next();
 				this.solvingSteps.push({
@@ -33,9 +32,9 @@ angular.module("module.appState", ["module.fraction", "module.m"])
 			}
 		};
 
-		this.start = function(){
+		this.solve = function(inputData){
 			var that = this,
-				sm = new SimplexMethod(lppImprover.getConvenienceLpp(this.inputData, function(lpp, type){
+				sm = new SimplexMethod(lppImprover.getConvenienceLpp(inputData, function(lpp, type){
 					that.improvementSteps.push({
 						type: type,
 						data: util.clone(lpp)
@@ -48,6 +47,10 @@ angular.module("module.appState", ["module.fraction", "module.m"])
 			});
 
 			this.generateTables(sm);
+		};
+
+		this.start = function(){
+			this.solve(this.inputData);
 
 			console.log("improvementSteps", this.improvementSteps);
 			console.log("solvingSteps", this.solvingSteps);

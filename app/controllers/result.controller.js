@@ -61,19 +61,115 @@ angular.module("app")
 			n = app.inputData.n,
 			M = mFactory.M;
 
+			$scope.addVariablePopupActive = false;
+
+			$scope.variableTypes = [
+				{
+					type: "additional",
+					description: "Додаткова"
+				},
+				{
+					type: "fake",
+					description: "Штучна"
+				},
+				{
+					type: "ordinary",
+					description: "Звичайна"
+				}
+			];
+
+			$scope.newVariable = {
+				type: $scope.variableTypes[0],
+				coeficient: 1,
+				name: "x"
+			}
+
+			$scope.showAddVariablePopup = function(step, limitation){
+				$scope.currentStep = step;
+				$scope.currentStep.editedLimitation = this.$index;
+				$scope.newVariable.index = parseInt($scope.currentStep.data.n) + 1;
+				$scope.addVariablePopupActive = true;				
+			};
+
+			$scope.hideAddVariablePopup = function(){
+				$scope.addVariablePopupActive = false;				
+			};
+
+			$scope.addVariable = function(){
+				var options = {
+					value: $scope.newVariable.coeficient,
+					name: $scope.newVariable.name,
+					index: $scope.newVariable.index - 1,
+					isAdditional: $scope.newVariable.type.type === "additional",
+					isFake: $scope.newVariable.type.type === "fake"
+				};
+
+				lppImprover.addVariable($scope.currentStep.data, $scope.currentStep.editedLimitation, options);
+
+				$scope.newVariable = {
+					type: $scope.variableTypes[0],
+					coeficient: 1,
+					name: "x"
+				}
+				$scope.addVariablePopupActive = false;				
+			};
+
 			$scope.improvementSteps = app.improvementSteps;
 			$scope.solvingSteps = app.solvingSteps;
 
+			$scope.cancelEdit = function(){
+				this.editMode = false;
+			};
+
+			$scope.activateEditMode = function(){
+				var that = this;
+
+				$scope.$broadcast("deactivateedit", this);
+
+				if(!this.hasListener){
+					this.hasListener = true;
+					this.$on("deactivateedit", function(args, scope){
+						if(scope !== that){
+							that.editMode = false;
+						}
+					});
+				}
+				
+				this.editMode = true;	
+			};
+
+
+
+			$scope.recalculate = function(){
+				var index = this.improvementSteps.indexOf(this.step),
+				lpp = util.clone(this.step.data);
+
+				this.cancelEdit();
+
+				app.improvementSteps.splice(index + 1);
+				app.solvingSteps.splice(0);
+				app.solve(lpp);
+
+				/*app.improvementSteps.push({
+					type: "goal-function",
+					data: util.clone(lpp)
+				});*/
+			};
+
 			$scope.recalculateTable = function(){
-				var index = this.solvingSteps.indexOf(this.step);
-
-				console.log("this.step", this);
-				console.log("app", app);
-
+				var index = this.solvingSteps.indexOf(this.step),
+					lpp = util.clone(this.step.data);
 
 				app.solvingSteps.splice(index + 1);
+				app.generateTables(lpp);
+			};
 
-				app.generateTables(util.clone(this.step.data));
+			$scope.matrixAElementUpdate = function(){
+				var solvingElement = this.$parent.$parent.step.data.solvingElement;
+
+				if(solvingElement.colIndex === this.$index && solvingElement.rowIndex === this.$parent.$index){
+					this.$parent.$parent.step.data.solvingElement.value = this.variable.value.clone();
+				}
 			};
 
 			$scope.notZero = function(item){

@@ -87,6 +87,11 @@ angular.module("module.lppImprover", ["module.util", "module.variable", "module.
 					step: "replace-variables",
 					improved: false,
 					message: "replaceVariables"
+				},
+				{
+					step: "final-goal-function",
+					improved: false,
+					message: "final-goal-function"
 				}
 			],
 			getStepData: function(step){

@@ -20,6 +20,8 @@ angular.module("module.lppImprover")
 			(!isAllEquations(lpp) || !isSingleBasisMatrix(lpp)) && normalizeLimitations(lpp, saveState);
 			!containsNegativeVariables(lpp) && normalizeNegativeVariables(lpp, saveState);
 
+			addStepInformation(lpp, 'goal-function', 'final-goal-function', saveState);
+
 			return lpp;
 			console.log(lpp);
 		};
@@ -30,12 +32,12 @@ angular.module("module.lppImprover")
 			lpp.notNegativeConditions.forEach(function(isPositive, index){
 				if(!isPositive){
 					lpp.n++;
-					lpp.matrixA = lpp.matrixA.map(function(row, rowIndex){
+					lpp.matrixA = lpp.matrixA.map(function(row){
 						row[index + k].name += "´";
 						row[index + k].replacedIndex = index;
 						row.splice(index + k + 1, 0, new Variable({
 							value: row[index + k].value.multiplyBy(-1),
-							name: row[index + k].name,
+							name: row[index + k].name + "´",
 							index: row[index + k].index,
 							replacedIndex: index
 						}));
@@ -47,7 +49,7 @@ angular.module("module.lppImprover")
 					lpp.fx[index + k].replacedIndex = index;
 					lpp.fx.splice(index + k + 1, 0, new Variable({
 						value: lpp.fx[index + k].value.multiplyBy(-1),
-						name: lpp.fx[index + k].name,
+						name: lpp.fx[index + k].name + "´",
 						index: lpp.fx[index + k].index,
 						replacedIndex: index
 					}));
@@ -348,7 +350,8 @@ angular.module("module.lppImprover")
 	  	return {
 	  		next: next,
 	  		getConvenienceLpp: getConvenienceLpp,
-	  		isConvenientLpp: isConvenientLpp
+	  		isConvenientLpp: isConvenientLpp,
+	  		addVariable: addVariable
 	  	};
 	}]);
 

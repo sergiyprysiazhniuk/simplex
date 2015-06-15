@@ -4,28 +4,83 @@
 	<div class="step" ng-repeat="step in improvementSteps">
 		<p>{{step.data.improvementData.stepInfo.message}}</p>
 		<div ng-if="step.type === 'goal-function'">
-			<p class="math">
+			<div ng-class="{editable: editMode}">
+				<div class="math" ng-hide="editMode" ng-click="activateEditMode()">
 					<span>f(x)=</span>
 					<span ng-repeat="variable in step.data.fx | filter:notZero">
 						{{variable.value | variable:$index}}{{variable.name}}<sub>{{variable.index + 1}}</sub>
 					</span>
-					<span> → min</span>
-				</p>
+					→ min
+				</div>
+				<div ng-show="editMode">
+					<div>
+						<span>f(x)=</span>
+						<span ng-repeat="variable in step.data.fx">
+							<input type="text" ng-model="variable.value" m-format>
+							{{variable.name}}<sub>{{variable.index + 1}}</sub>
+						</span>
+						<span>
+						→ min</span>	
+					</div>					
+
+					<button ng-click="recalculate()">OK</button>
+					<button class="close-popup" ng-click="cancelEdit()"></button>				
+				</div>
+			</div>		
 		</div>
 
 		<div ng-if="step.type === 'limitations'">
-			<div ng-repeat="row in step.data.matrixA">
-				<p class="math">
+			<div ng-repeat="row in step.data.matrixA" ng-class="{editable: editMode}">
+				<div class="math" ng-hide="editMode" ng-click="activateEditMode()">
 					<span ng-repeat="variable in row | filter:notZero">
 						{{variable.value | variable:$index}}{{variable.name}}<sub>{{variable.index + 1}}</sub>
 					</span>
 					<span>{{step.data.signs[$index] | sign}}</span>
 					<span>{{step.data.matrixB[$index].toString()}}</span>
-				</p>
+				</div>
+				<div ng-show="editMode">
+					<div>
+						<span ng-repeat="variable in row">
+							<input type="text" ng-model="variable.value" m-format>
+							{{variable.name}}<sub>{{variable.index + 1}}</sub>
+						</span>
+						<span>{{step.data.signs[$index] | sign}}</span>
+						<input type="text" ng-model="step.data.matrixB[$index]" m-format>
+					</div>
+					<button ng-click="recalculate()">OK</button>
+					<button ng-click="showAddVariablePopup(step, row)">Додати змінну</button>
+					<button class="close-popup" ng-click="cancelEdit()"></button>
+				</div>				
 			</div>			
 		</div>
 	</div>
 
+	<div class="popup" ng-show="addVariablePopupActive">
+		<div class="content">
+			<ul>
+				<li>
+					<select class="var-info" ng-options="item.description for item in variableTypes" ng-model="newVariable.type">
+						<!-- <option ng-repeat="type in variableTypes" ng-value="type">{{type.description}}</option> -->
+					</select>
+					<label>Тип змінної</label>
+				</li>
+				<li>
+					<input ng-model="newVariable.coeficient" type="text" class="var-info"/>
+					<label>Коефіцієнт</label>
+				</li>
+				<li>
+					<input type="text" class="var-info" ng-model="newVariable.name"/>
+					<label>Назва</label>
+				</li>
+				<li>
+					<input type="text" class="var-info" ng-model="newVariable.index"/>
+					<label>Індекс</label>
+				</li>
+			</ul>
+			<button ng-click="addVariable()">OK</button>
+			<button class="close-popup" ng-click="hideAddVariablePopup()"></button>
+		</div>
+	</div>
 
 
 
@@ -51,7 +106,9 @@
 							<td ng-repeat="variable in row"
 								ng-model="variable.value"
 								m-format
-								ng-class="{around: step.data.solvingElement.rowIndex === $parent.$index && step.data.solvingElement.colIndex === $index}" contenteditable>{{variable.value.toString()}}</td>
+								ng-class="{around: step.data.solvingElement.rowIndex === $parent.$index && step.data.solvingElement.colIndex === $index}"
+								contenteditable
+								ng-change="matrixAElementUpdate()">{{variable.value.toString()}}</td>
 							<td contenteditable 
 								ng-model="step.data.lpp.matrixB[$index]"
 								m-format>

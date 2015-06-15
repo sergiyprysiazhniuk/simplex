@@ -89,6 +89,7 @@ angular.module("module.simplexMethod", [
 				colIndex: colIndex,
 				rowIndex: rowIndex,
 				value: this.lpp.matrixA[rowIndex][colIndex].value.clone()
+				// value: this.lpp.matrixA[rowIndex][colIndex].value
 			}
 		};
 
@@ -127,14 +128,17 @@ angular.module("module.simplexMethod", [
 		};
 
 		SimplexMethod.prototype._divideTableRow = function(rowIndex){
+			// var solvingValue = this.lpp.matrixA[this.solvingElement.rowIndex][this.solvingElement.colIndex];
+			var solvingValue = this.solvingElement.value;
+
 			this.lpp.matrixA[rowIndex] = this.lpp.matrixA[rowIndex]
 				.map(function(item, index, array){
-					item.value = item.value.divideBy(this.solvingElement.value);
+					item.value = item.value.divideBy(solvingValue);
 
 					return item;
 				}, this);
 
-			this.lpp.matrixB[rowIndex] = this.lpp.matrixB[rowIndex].divideBy(this.solvingElement.value);
+			this.lpp.matrixB[rowIndex] = this.lpp.matrixB[rowIndex].divideBy(solvingValue);
 		};
 
 		SimplexMethod.prototype._containsPositiveMark = function(){
@@ -144,11 +148,6 @@ angular.module("module.simplexMethod", [
 		};
 
 		SimplexMethod.prototype.isImprovable = function(){
-			/*return this._containsPositiveMark() && !!this._getPositiveMarks().filter(function(item){
-				return this._getMatrixAColumn(this.lpp.matrixC.indexOf(item)).filter(function(item){
-					return item.value.moreThan(0);
-				}).length;
-			}, this).length;*/
 			return this._containsPositiveMark() && this._getPositiveMarks().every(function(item){
 				return this._getMatrixAColumn(this.lpp.matrixC.indexOf(item)).some(function(item){
 					return item.value.moreThan(0);
