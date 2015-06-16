@@ -151,10 +151,7 @@ angular.module("app")
 				app.solvingSteps.splice(0);
 				app.solve(lpp);
 
-				/*app.improvementSteps.push({
-					type: "goal-function",
-					data: util.clone(lpp)
-				});*/
+				app.updateResultSteps();
 			};
 
 			$scope.recalculateTable = function(){
@@ -163,6 +160,9 @@ angular.module("app")
 
 				app.solvingSteps.splice(index + 1);
 				app.generateTables(lpp);
+
+				app.resultSteps.splice(0);
+				app.updateResultSteps();
 			};
 
 			$scope.matrixAElementUpdate = function(){

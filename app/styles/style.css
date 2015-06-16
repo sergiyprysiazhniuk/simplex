@@ -274,7 +274,8 @@ input{
 .popup li:last-of-type{
 	border: none;
 }
-.edited{
+.edited,
+.ng-dirty{
 	color: red;
 	font-weight: bold;
 }

@@ -13,8 +13,8 @@ angular.module("module.lppImprover")
 		function getConvenienceLpp(rawLpp, saveState){
 			var lpp = util.clone(rawLpp);
 
-			lpp.improvementData = {};
-			
+			lpp.improvementData = lpp.improvementData || {};
+
 			!isMinimized(lpp) && normalizeFunction(lpp, saveState);
 			!isPositiveAllFreeMembers(lpp) && normalizeFreeMembers(lpp, saveState);
 			(!isAllEquations(lpp) || !isSingleBasisMatrix(lpp)) && normalizeLimitations(lpp, saveState);
@@ -28,6 +28,8 @@ angular.module("module.lppImprover")
 
 		function normalizeNegativeVariables(lpp, saveState){
 			var k = 0;
+
+			lpp.improvementData.notNegativeConditions = util.clone(lpp.notNegativeConditions);
 
 			lpp.notNegativeConditions.forEach(function(isPositive, index){
 				if(!isPositive){
@@ -55,6 +57,12 @@ angular.module("module.lppImprover")
 					}));
 					k++;
 				}
+			});
+
+			// lpp.improvementData.notNegativeConditions = util.clone(lpp.notNegativeConditions);
+
+			lpp.notNegativeConditions = lpp.notNegativeConditions.map(function(){
+				return true;
 			});
 
 			addStepInformation(lpp, 'limitations', 'replace-variables', saveState);

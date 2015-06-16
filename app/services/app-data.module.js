@@ -56,18 +56,17 @@ angular.module("module.appState", ["module.fraction", "module.m"])
 
 			this.generateTables(sm);
 
-			resultSteps = resultAnalyzer.getResultSteps(this.solvingSteps[this.solvingSteps.length - 1].data);
+			console.log("SOLVE");
 
-			// this.resultSteps = resultSteps;
-			resultSteps.forEach(function(step){
-				this.resultSteps.push(step);
-			}, this);
+			this.updateResultSteps();
 		};
 
 		this.updateResultSteps = function(){
 			var resultSteps = resultAnalyzer.getResultSteps(this.solvingSteps[this.solvingSteps.length - 1].data);
 
-			this.resultSteps = [];
+			console.log("updateResultSteps");
+
+			this.resultSteps.splice(0);
 
 			resultSteps.forEach(function(step){
 				this.resultSteps.push(step);

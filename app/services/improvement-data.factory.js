@@ -11,87 +11,87 @@ angular.module("module.lppImprover", ["module.util", "module.variable", "module.
 				{
 					step: "all-free-members-not-negative",
 					improved: false,
-					message: "Перевіряємо чи всі вільні члени є невід'ємними"
+					message: "Перевіряємо чи всі вільні члени є невід'ємними.  У нашому виладку - ні"
 				},
 				{
 					step: "limitations-less-equal",
 					type: "general",
 					improved: false,
-					message: "limitationsLessEqual"
+					message: "Перевіряємо чи є в системі  нерівності типу \"≤\"."
 				},
 				{
 					step: "add-additional-variables-less-equal-limitations",
 					improved: false,
-					message: "addAdditionalVariables"
+					message: "Додаємо до лівої частини кожної з них додаткові змінні. Маємо систему обмежень:"
 				},
 				{
 					step: "equations",
 					type: "general",
 					improved: false,
-					message: "equations"
+					message: "Перевіряємо чи є в системі рівняння для яких не встановлені базисні змінні."
 				},
 				{
 					step: "add-fake-variables-equations",					
 					improved: false,
-					message: "addFakeVariables"
+					message: "Додаємо штучні змінні:"
 				},
 				{
 					step: "limitations-more-equal",
 					type: "general",
 					improved: false,
-					message: "limitationsMoreEqual"
+					message: "Перевіряємо чи є в системі  нерівності типу \"≥\"."
 				},
 				{
 					step: "subtract-additional-variables-limitations-more-equal",
 					improved: false,
-					message: "subtractAdditionalVariables"
+					message: "Віднімаємо додаткові змінні."
 				},
 				{
 					step: "subtract-equations-limitations-more-equal",
 					improved: false,
-					message: "subtractEquations"
+					message: "Від рівняння з максимальним вільним членом (поміченого) віднімаємо всі інші рівняння:"
 				},
 				{
 					step: "add-fake-variable-limitations-more-equal",
 					improved: false,
-					message: "addFakeVariable"
+					message: "До лівої частини поміченого рівняння додаємо штучну змінну:"
 				},
 				{
 					step: "limitations-more-equal-and-equal",
 					type: "general",
 					improved: false,
-					message: "limitations-more-equal-and-equal"
+					message: "Перевіряємо чи є в системі  нерівності типу \"≥\" та \"=\"."
 				},
 
 				{
 					step: "divide-limitations-more-and-equal",
 					improved: false,
-					message: "divideLimitations"
+					message: "Порівнюємо вільні члени всіх нерівностей порівнюємо з вільним членом поміченого рівняння. Ділимо обидві частини нерівності:"
 				},
 				{
 					step: "subtract-equations-more-and-equal",
 					improved: false,
-					message: "subtractEquations"
+					message: "Від поміченого рівняння віднімаємо кожне з рівнянь, отриманих з нерівностей:"
 				},
 				{
 					step: "subtract-additional-variables-more-and-equal",
 					improved: false,
-					message: "subtractAdditionalVariables"
+					message: "Від лівої частини кожної з нерівностей віднімаємо додаткові змінні:"
 				},
 				{
 					step: "add-fake-variables-more-and-equal",
 					improved: false,
-					message: "addFakeVariables"
+					message: "Додаємо штучні змінні:"
 				},
 				{
 					step: "replace-variables",
 					improved: false,
-					message: "replaceVariables"
+					message: "Використовуємо перетворення для змінних, на які не накладена умова невід'ємності:"
 				},
 				{
 					step: "final-goal-function",
 					improved: false,
-					message: "final-goal-function"
+					message: "Функція цілі:"
 				}
 			],
 			getStepData: function(step){
