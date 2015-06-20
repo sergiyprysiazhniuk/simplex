@@ -25,10 +25,6 @@ angular.module("module.appState", ["module.fraction", "module.m"])
 		this.improvementSteps = [];
 		this.resultSteps = [];
 
-		this.recalculateTable = function(sm){
-
-		};
-
 		this.generateTables = function(sm){
 			while(sm.isImprovable()){
 				sm.next();
@@ -55,16 +51,11 @@ angular.module("module.appState", ["module.fraction", "module.m"])
 			});
 
 			this.generateTables(sm);
-
-			console.log("SOLVE");
-
 			this.updateResultSteps();
 		};
 
 		this.updateResultSteps = function(){
 			var resultSteps = resultAnalyzer.getResultSteps(this.solvingSteps[this.solvingSteps.length - 1].data);
-
-			console.log("updateResultSteps");
 
 			this.resultSteps.splice(0);
 

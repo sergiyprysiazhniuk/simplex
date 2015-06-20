@@ -7,6 +7,7 @@ var app = angular.module("app", [
 		"module.start",
 		"module.util",
 		"module.appState",
+		"module.trainingState",
 		"module.variable",
 		"module.simplexMethod",
 		"module.lppImprover",
@@ -16,13 +17,43 @@ var app = angular.module("app", [
 app
 	.config(["$stateProvider", "$urlRouterProvider",
 	  function($stateProvider, $urlRouterProvider) {
-		$urlRouterProvider.otherwise("/size");
+		$urlRouterProvider.otherwise("/");
 
 		$stateProvider
+			.state('main', {
+				url: "/",
+				templateUrl: "views/main.html"
+			})
 			.state('size', {
 				url: "/size",
 				templateUrl: "views/size.html",
 	        	controller: "sizeCtrl"
+			})
+			.state('training-size', {
+				url: "/training-size",
+				templateUrl: "views/training-size.html",
+	        	controller: "sizeCtrl"
+			})
+			.state('training', {
+				url: "/training",
+				views: {
+					"": {
+						templateUrl: "views/training.html"
+					},
+					"input@training": { 
+						templateUrl: "views/input.html",
+				        controller: "inputCtrl"
+				    },
+					"training-result@training": {
+						templateUrl: "views/training-result.html",
+				        controller: "trainingCtrl"
+					}
+			    }
+			})
+			.state('testing', {
+				url: "/testing",
+				templateUrl: "views/testing.html",
+	        	controller: "testingCtrl"
 			})
 			.state('editable', {
 				url: "/editable",

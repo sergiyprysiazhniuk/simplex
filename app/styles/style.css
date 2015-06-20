@@ -50,6 +50,7 @@ table{
 }
 #result th,
 #result td:first-of-type{
+    height: 36px;
     font-family: serif;
     font-weight: bold;
     font-style: italic;

@@ -95,7 +95,6 @@ angular.module("module.lppImprover", ["module.util", "module.variable", "module.
 				}
 			],
 			getStepData: function(step){
-				/*console.log("getStepData", this);*/
 				return this.improveScheme.filter(function(item){
 					return item.step === step;
 				})[0];

@@ -43,8 +43,19 @@ angular.module("module.util", [])
 			return string;
 		}
 
+		function generateArray(length, callback){
+			var array = [], i;
+
+			for (i = 0; i < length; i++) {
+				array.push(callback && callback(array[i], i, array));
+			};
+
+			return array;
+		}
+
 		return {
 			clone: clone,
-			template: template
+			template: template,
+			generateArray: generateArray
 		}
 	});

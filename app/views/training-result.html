@@ -1,0 +1,67 @@
+<div id="result">
+	<h2>Result</h2>
+
+	<div class="step" ng-repeat="step in trainingSteps">
+		<div class="simplex-table">
+				<table>
+					<thead>
+						<tr>
+							<th></th>
+							<th ng-repeat="variable in step.data.lpp.fx">
+								{{variable.name}}<sub>{{variable.index + 1}}</sub>
+							</th>
+							<th>b<sub>i</sub></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="row in step.data.lpp.matrixA">
+							<td>
+								<select ng-options="item.displayName for item in step.variables" ng-model="step.data.basis[$index]" ng-change="setLimitationIndex(step.data.basis[$index], $index)">
+							</td>
+							<td ng-repeat="variable in row"
+								ng-model="variable.value"
+								m-format
+								ng-class="{around: step.data.solvingElement.rowIndex === $parent.$index && step.data.solvingElement.colIndex === $index}"
+								contenteditable
+								ng-change="matrixAElementUpdate()">{{variable.value.toString()}}</td>
+							<td contenteditable 
+								ng-model="step.data.lpp.matrixB[$index]"
+								m-format>
+								{{step.data.lpp.matrixB[$index].toString()}}
+							</td>
+							<td contenteditable ng-if="step.type === 'first-simplex-table'">
+								{{step.data.lpp.fx[step.data.basis[$index].basisVariable._index].value.toString()}}
+							</td>
+						</tr>
+						<tr>
+							<td>f(x)</td>
+							<td ng-repeat="value in step.data.lpp.fx"
+								contenteditable
+								ng-model="step.data.lpp.matrixC[$index]"
+								m-format
+								>{{step.data.lpp.matrixC[$index].toString()}}</td>
+							<td ng-model="step.data.anglePoint.value"
+								m-format
+								contenteditable="true">{{step.data.anglePoint.value.toString()}}</td>
+						</tr>
+						<tr ng-if="step.type === 'first-simplex-table'">
+							<td class="without-borders"></td>
+							<td contenteditable ng-repeat="variable in step.data.lpp.fx">{{variable.value.toString()}}</td>
+						</tr>
+					</tbody>
+				</table>
+				<select ng-options="action.type as action.text for action in actions" ng-model="step.nextAction">
+					<option value="">Виберіть дію</option>
+				</select>
+				<div ng-show="step.nextAction === 'improvable'">
+					<p>solving row</p>
+					<select ng-options="item.index as (item.index + 1) for item in rowIndexes" ng-model="step.data.solvingElement.rowIndex">
+					</select>
+					<p>solving column</p>
+					<select ng-options="item.index as (item.index + 1) for item in colIndexes" ng-model="step.data.solvingElement.colIndex">
+					</select>
+				</div>
+				<button ng-click="confirm()">OK</button>
+			</div>
+	</div>
+</div>

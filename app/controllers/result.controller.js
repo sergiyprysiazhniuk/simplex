@@ -35,19 +35,6 @@ angular.module("app")
 	}
 )
 
-/*.directive('mFormat', ['$filter', "mFactory", function ($filter, mFactory) {
-    return {
-        require: '?ngModel',
-        link: function (scope, elem, attrs, ctrl) {
-            if (!ctrl) return;
-
-            ctrl.$parsers.unshift(function (viewValue) {
-                return new mFactory.M(viewValue);
-            });
-        }
-    };
-}])*/
-
 .controller("resultCtrl", 
 		["$scope",
 		"utilFactory",

@@ -20,7 +20,7 @@ angular.module("module.simplexMethod", [
 		SimplexMethod.prototype.next = function(){
 			this.buildTable();
 
-			console.log("GET_SOLVING_COLUMN", this._getSolvingColumn());
+			// console.log("GET_SOLVING_COLUMN", this._getSolvingColumn());
 
 			if(this.isImprovable()){
 				this.updateSolvingElement();
@@ -45,7 +45,7 @@ angular.module("module.simplexMethod", [
 		SimplexMethod.prototype.getBasis = function(){	
 
 
-			console.log("LPP", this.lpp);
+			// console.log("LPP", this.lpp);
 
 			return this.lpp.matrixA.map(function(limitation, limitationIndex){
 				var variable = limitation.filter(function(limitationElement, elementIndex){
@@ -54,7 +54,7 @@ angular.module("module.simplexMethod", [
 						}).length;
 					}, this)[0];
 
-				console.log("VARIABLE", limitation);
+				// console.log("VARIABLE", limitation);
 
 				return {
 					limitation: limitationIndex,
@@ -221,7 +221,7 @@ angular.module("module.simplexMethod", [
 
 		SimplexMethod.prototype._getAnglePoint = function() {
 
-			console.log("_getAnglePoint");
+			// console.log("_getAnglePoint");
 
 			var basisIndexes = this.getBasis().map(function(element){
 					return element.basisVariable._index;

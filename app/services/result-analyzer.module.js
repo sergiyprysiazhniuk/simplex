@@ -23,7 +23,6 @@ angular.module("module.resultAnalyzer", ["module.util", "module.variable", "modu
 			return lpp.fx.filter(function(item){
 				return item.isFake;
 			}).every(function(item){
-				console.log("QQQQQQQ", item);
 				return item.value.equalTo(0);
 			});
 		}

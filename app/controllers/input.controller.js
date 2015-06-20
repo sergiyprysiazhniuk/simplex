@@ -16,49 +16,67 @@ angular.module("app")
 	.controller("inputCtrl", 
 		["$scope",
 		 "$http",
+		 "$location",
 		 "appStateService",
+		 "trainingStateService",
 		 "variableFactory",
 		 "mFactory",
 		 "simplexMethodFactory",
 		 "lppImproverFactory",
-	 function($scope, $http, app, Variable, mFactory, SimplexMethod, lppImprover){
+		 "utilFactory",
+	 function($scope, $http, $location, app, training, Variable, mFactory, SimplexMethod, lppImprover, util){
 		var m = app.inputData.m,
 			n = app.inputData.n,
 			M = mFactory.M;
 
-		$scope.A = generateArray(m, function(array){
-			return generateArray(n, function(array, index){
-				return new Variable({
-					name: "x",
-					value: '1',
-					index: index
-				})
+		if(!app.inputData.matrixA){
+			app.inputData.matrixA = util.generateArray(m, function(array){
+				return util.generateArray(n, function(array, index){
+					return new Variable({
+						name: "x",
+						value: 0,
+						index: index
+					})
+				});
 			});
+		}
+		if(!app.inputData.matrixB){
+			app.inputData.matrixB = util.generateArray(m, function(){
+				return new M(0);
+			});
+		}
+		if(!app.inputData.fx){
+			app.inputData.fx = util.generateArray(n, function(array, index){
+				return new Variable({
+						name: "x",
+						value: 0,
+						index: index
+					})
+			});
+		}
+		if(!app.inputData.signs){
+			app.inputData.signs = util.generateArray(m, function(){
+				return "=";
+			});
+		}
+		if(!app.inputData.notNegativeConditions){
+			app.inputData.notNegativeConditions = util.generateArray(n, function(){
+				return true;
+			});
+		}
+
+		$scope.A = app.inputData.matrixA;
+		$scope.B = app.inputData.matrixB;
+		$scope.fx = app.inputData.fx;
+
+		$scope.signs = app.inputData.signs.map(function(sign){
+			return {value: sign};
+		});
+		$scope.notNegativeConditions = app.inputData.notNegativeConditions.map(function(item){
+			return { value: item };
 		});
 
-		$scope.B = generateArray(m, function(){
-			return {value: '2'};
-		});
-
-		$scope.signs = generateArray(m, function(){
-			return {value: '='};
-		});
-
-		$scope.fx = generateArray(m, function(array, index){
-			return new Variable({
-					name: "x",
-					value: '3',
-					index: index
-				})
-		});
-
-		$scope.notNegativeConditions = generateArray(m, function(array, index){
-			return {
-					value: true
-				}
-		});
-
-		$scope.extreme = "min";
+		$scope.extreme = app.inputData.extreme || "min";
 
 		$scope.availableSigns = ['=', '<', '>'];
 		$scope.availableConditions = [
@@ -72,77 +90,18 @@ angular.module("app")
 			}
 		];
 
-		$scope.load = function(){
-			$http.get('../data/p30.json').success(function(data) {
-				$scope.m = data.m,
-				$scope.n = data.n;	
-
-				$scope.data = data;
-
-				$scope.A = data.matrixA.map(function(item){
-					return item.map(function(item, index){
-						return new Variable({
-							name: "x",
-							value: new M(item),
-							index: index
-						})
-					});
-				});
-
-				$scope.B = data.matrixB.map(function(item){
-					return {value: new M(item)};
-				});
-
-				$scope.signs = data.signs.map(function(item){
-					return {value: item};
-				});
-
-				$scope.fx = data.fx.map(function(item, index){
-						return new Variable({
-							name: "x",
-							value: new M(item),
-							index: index
-						})
-					});
-
-				$scope.notNegativeConditions = data.notNegativeConditions.map(function(item){
-					return {
-							value: item
-						}
-				});
-
-				$scope.extreme = data.extreme;
-			});	
+		$scope.next = function(){	
+			switch($location.path()){
+				case "/editable":
+					app.start();
+					break;
+				case "/training":
+					training.next();
+					break;	
+			}
 		};
 
-		$scope.load();
-
-		$scope.next = function(){
-			app.inputData.m = $scope.m;
-			app.inputData.n = $scope.n;
-
-			app.inputData.matrixA = $scope.A;
-
-			app.inputData.matrixB = $scope.B.map(function(item){
-				return item.value;
-			});
-
-			app.inputData.fx = $scope.fx;
-
-			app.inputData.notNegativeConditions = $scope.notNegativeConditions.map(function(item){
-				return item.value;
-			});			
-
-			app.inputData.signs = $scope.signs.map(function(item){
-				return item.value;
-			});
-			
-			app.inputData.extreme = $scope.extreme;
-
-			app.start();
-		};
-
-		function generateArray(length, callback){
+		/*function util.generateArray(length, callback){
 			var array = [], i;
 
 			for (i = 0; i < length; i++) {
@@ -150,5 +109,5 @@ angular.module("app")
 			};
 
 			return array;
-		}
+		}*/
 	}]);
