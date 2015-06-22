@@ -133,7 +133,13 @@
 						</tr>
 					</tbody>
 				</table>
-				<p class="math"></p>
+				<!-- <p class="math"></p> -->
+				<p>Розв'язуючий рядок</p>
+				<select ng-options="item.index as (item.index + 1) for item in rowIndexes" ng-model="step.data.solvingElement.rowIndex" ng-change="setSolvingElementValue()">
+				</select>
+				<p>Розв'язуючий стовпчик</p>
+				<select ng-options="item.index as (item.index + 1) for item in colIndexes" ng-model="step.data.solvingElement.colIndex" ng-change="setSolvingElementValue()">
+				</select>
 				<button ng-click="recalculateTable()">OK</button>
 			</div>
 	</div>

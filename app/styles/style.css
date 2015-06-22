@@ -276,7 +276,7 @@ input{
 	border: none;
 }
 .edited,
-.ng-dirty{
+.mistake{
 	color: red;
 	font-weight: bold;
 }

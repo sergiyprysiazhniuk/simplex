@@ -65,6 +65,22 @@ angular.module("app")
 				}
 			];
 
+			$scope.rowIndexes = util.generateArray(m, function(_, index){
+				return {index: index};
+			});
+
+	    	$scope.colIndexes = util.generateArray(n, function(_, index){
+				return {index: index};
+			});
+
+			$scope.setSolvingElementValue = function(){
+				console.log("setSolvingElementValue", this);
+				var solvingRow = this.step.data.solvingElement.rowIndex,
+					solvingCol = this.step.data.solvingElement.colIndex;
+
+				this.step.data.solvingElement.value = this.step.data.lpp.matrixA[solvingRow][solvingCol].value;
+			};
+
 			$scope.newVariable = {
 				type: $scope.variableTypes[0],
 				coeficient: 1,

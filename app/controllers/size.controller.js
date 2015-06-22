@@ -18,7 +18,7 @@ angular.module("app")
 		};
 
 		$scope.load = function(){
-			$http.get('../data/data1.json').success(function(data){
+			$http.get('../data/input.json').success(function(data){
 				app.inputData.m = data.m;
 				app.inputData.n = data.n;
 

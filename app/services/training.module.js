@@ -43,7 +43,9 @@ angular.module("module.trainingState", ["module.fraction", "module.m"])
 			this.trainingSteps.push(step);
 			this.simplexTables.push(new SimplexMethod(app.inputData));
 
-			console.log("app--trainingState", app);		
+
+
+			console.log("app--trainingState", this);		
 
 			console.log(this);
 		};
@@ -63,7 +65,7 @@ angular.module("module.trainingState", ["module.fraction", "module.m"])
 				return "improvable";
     		}
 
-    		// console.log("getActualAction", action);
+    		return "not-limited-bottom";
     	};
 
     	function hasResult(lpp){
