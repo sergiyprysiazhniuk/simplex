@@ -1,0 +1,42 @@
+#problemsList{
+	padding: 0px 5%;
+	margin: 0 10% 0;
+	height: 540px;
+	border: 1px solid #868686;
+	border-radius: 4px;
+	background: rgba(0, 0, 0, 0.02);
+	overflow: auto;
+}
+
+#problemsList h3{
+	margin: 10px 0;
+	text-align: center;
+}
+
+#problemsList button{
+	padding: 5px;
+	border-radius: 4px;
+	margin: 15px auto 0;
+}
+
+#problemsList .limitations-system{
+	margin: 15px 0;
+}
+
+#size .flex-container{
+	display: flex;
+	justify-content: space-around;
+}
+
+#size{
+	padding: 0px 5%;
+	margin: 25px 10% 25px;
+	border: 1px solid #868686;
+	border-radius: 4px;
+	background: rgba(0, 0, 0, 0.02);
+}
+
+.list-header{
+	text-align: center;
+	margin: 15px 0;
+}

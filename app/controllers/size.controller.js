@@ -10,6 +10,7 @@ angular.module("app")
     function($http, $scope, mFactory, Variable, app){
 		$scope.m = app.inputData.m;
 		$scope.n = app.inputData.n;
+		$scope.problems = [];
 		M = mFactory.M;
 
 		$scope.next = function(){
@@ -18,11 +19,21 @@ angular.module("app")
 		};
 
 		$scope.load = function(){
-			$http.get('../data/input.json').success(function(data){
-				app.inputData.m = data.m;
-				app.inputData.n = data.n;
+			console.log(this);
+			app.inputData = this.step;
+		};
 
-				app.inputData.matrixA = data.matrixA.map(function(item){
+		$http.get('/problems-list').success(function(data){
+
+			data.forEach(function(problem, index){
+				var input = {};
+
+				input.name = problem.name;
+
+				input.m = problem.m;
+				input.n = problem.n;
+
+				input.matrixA = problem.matrixA.map(function(item){
 					return item.map(function(item, index){
 						return new Variable({
 							name: "x",
@@ -32,11 +43,11 @@ angular.module("app")
 					});
 				});
 
-				app.inputData.matrixB = data.matrixB.map(function(item){
+				input.matrixB = problem.matrixB.map(function(item){
 					return new M(item);
 				});;
 
-				app.inputData.fx = data.fx.map(function(item, index){
+				input.fx = problem.fx.map(function(item, index){
 					return new Variable({
 						name: "x",
 						value: new M(item),
@@ -44,11 +55,21 @@ angular.module("app")
 					})
 				});
 
-				app.inputData.notNegativeConditions = data.notNegativeConditions;		
+				input.notNegativeConditions = problem.notNegativeConditions;		
 
-				app.inputData.signs = data.signs;
+				input.signs = problem.signs;
 				
-				app.inputData.extreme = data.extreme;
-			});	
+				input.extreme = problem.extreme;
+
+				$scope.problems.push(input);
+			});
+		});
+
+		$scope.positive = function(value){
+			return value;
+		};
+
+		$scope.notZero = function(item){
+			return !item.value.equalTo(0);
 		};
 	}]);
