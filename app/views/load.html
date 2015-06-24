@@ -1,0 +1,31 @@
+<h2 class="list-header">Список доступних умов задач</h2>
+<div id="problemsList">
+    <div class="step" ng-repeat="step in problems">
+        <h3>{{step.name}}</h3>
+        <div class="math function" ng-hide="editMode" ng-click="activateEditMode()">
+            <span>f(x)=</span>
+            <span ng-repeat="variable in step.fx | filter:notZero">
+                {{variable.value | variable:$index}}{{variable.name}}<sub>{{variable.index + 1}}</sub>
+            </span>
+            → {{step.extreme}}
+        </div>
+        <div class="limitations-system">
+            <div ng-repeat="row in step.matrixA">
+                <div class="math">
+                    <span ng-repeat="variable in row | filter:notZero">
+                        {{variable.value | variable:$index}}x<sub>{{variable.index + 1}}</sub>
+                    </span>
+                    <span>{{step.signs[$index] | sign}}</span>
+                    <span>{{step.matrixB[$index].toString()}}</span>
+                </div>           
+            </div>    
+        </div>           
+        <div class="math conditions">
+            <span ng-repeat="condition in step.notNegativeConditions | filter:positive track by $index">
+                {{step.fx[$index].name}}<sub>{{step.fx[$index].index + 1}}</sub> ≥ 0{{$index === ((step.notNegativeConditions | filter:positive).length - 1) ? "" : "; "}}
+            </span>
+        </div>  
+        <button ng-if="mode === 'editable'" class="general" ng-click="load()" ui-sref="editable">Завантажити</button>     
+        <button ng-if="mode === 'training'" class="general" ng-click="load()" ui-sref="training">Завантажити</button>     
+    </div>
+</div>

@@ -1,13 +1,12 @@
 <div id="result">
-	<h2>Result</h2>
-
-	<div class="step" ng-repeat="step in improvementSteps">
-		<p>{{step.data.improvementData.stepInfo.message}}</p>
+	<div ng-class="{'only-header': step.type === 'header'}" class="step" ng-repeat="step in improvementSteps">
+		<p class="caption">{{step.data.improvementData.stepInfo.message}}</p>
 		<div ng-if="step.type === 'goal-function'">
 			<div ng-class="{editable: editMode}">
 				<div class="math" ng-hide="editMode" ng-click="activateEditMode()">
 					<span>f(x)=</span>
-					<span ng-repeat="variable in step.data.fx | filter:notZero">
+					<span ng-repeat="variable in step.data.fx | filter:notZero"
+							ng-class="{mistake: variable.originalValue !== variable.value.toString()}">
 						{{variable.value | variable:$index}}{{variable.name}}<sub>{{variable.index + 1}}</sub>
 					</span>
 					→ min
@@ -16,7 +15,11 @@
 					<div>
 						<span>f(x)=</span>
 						<span ng-repeat="variable in step.data.fx">
-							<input type="text" ng-model="variable.value" m-format>
+							<input type="text"
+								ng-model="variable.value"
+								ng-init="variable.originalValue = variable.value.toString()"
+								ng-class="{mistake: variable.originalValue !== variable.value.toString()}"
+								m-format>
 							{{variable.name}}<sub>{{variable.index + 1}}</sub>
 						</span>
 						<span>
@@ -32,23 +35,35 @@
 		<div ng-if="step.type === 'limitations'">
 			<div ng-repeat="row in step.data.matrixA" ng-class="{editable: editMode}">
 				<div class="math" ng-hide="editMode" ng-click="activateEditMode()">
-					<span ng-repeat="variable in row | filter:notZero">
+					<span ng-repeat="variable in row | filter:notZero" ng-class="{mistake: variable.originalValue !== variable.value.toString()}">
 						{{variable.value | variable:$index}}{{variable.name}}<sub>{{variable.index + 1}}</sub>
 					</span>
 					<span>{{step.data.signs[$index] | sign}}</span>
-					<span>{{step.data.matrixB[$index].toString()}}</span>
+					<span ng-init="originalValue = step.data.matrixB[$index].toString()"
+							ng-class="{mistake: originalValue !== step.data.matrixB[$index].toString()}">{{step.data.matrixB[$index].toString()}}</span>
 				</div>
-				<div ng-show="editMode">
+				<div class="edit-mode" ng-show="editMode">
 					<div>
 						<span ng-repeat="variable in row">
-							<input type="text" ng-model="variable.value" m-format>
+							<input type="text"
+							ng-model="variable.value"
+							ng-init="variable.originalValue = variable.value.toString()"
+							ng-class="{mistake: variable.originalValue !== variable.value.toString()}"
+							m-format>
 							{{variable.name}}<sub>{{variable.index + 1}}</sub>
 						</span>
 						<span>{{step.data.signs[$index] | sign}}</span>
-						<input type="text" ng-model="step.data.matrixB[$index]" m-format>
+						<input type="text"
+							ng-model="step.data.matrixB[$index]"
+							ng-init="originalValue = step.data.matrixB[$index].toString()"
+							ng-class="{mistake: originalValue !== step.data.matrixB[$index].toString()}"
+							m-format>
 					</div>
-					<button ng-click="recalculate()">OK</button>
-					<button ng-click="showAddVariablePopup(step, row)">Додати змінну</button>
+					<div class="actions">
+						<button ng-click="recalculate()">OK</button>
+						<button ng-click="showAddVariablePopup(step, row)">Додати змінну</button>
+					</div>
+					
 					<button class="close-popup" ng-click="cancelEdit()"></button>
 				</div>				
 			</div>			
@@ -84,6 +99,7 @@
 
 
 	<div class="step" ng-repeat="step in solvingSteps">
+		<p class="caption" ng-if="step.type === 'first-simplex-table'">Задача має зручний вигляд для застосування симплекс-методу.</p>
 		<div class="simplex-table">
 				<table>
 					<thead>
@@ -103,12 +119,16 @@
 							</td>
 							<td ng-repeat="variable in row"
 								ng-model="variable.value"
+								ng-init="originalValue = variable.value.toString()"
 								m-format
-								ng-class="{around: step.data.solvingElement.rowIndex === $parent.$index && step.data.solvingElement.colIndex === $index}"
+								ng-class="{around: step.data.solvingElement.rowIndex === $parent.$index && step.data.solvingElement.colIndex === $index,
+								mistake: originalValue !== variable.value.toString()}"
 								contenteditable
 								ng-change="matrixAElementUpdate()">{{variable.value.toString()}}</td>
 							<td contenteditable 
 								ng-model="step.data.lpp.matrixB[$index]"
+								ng-init="originalValue = step.data.lpp.matrixB[$index].toString()"
+								ng-class="{mistake: originalValue !== step.data.lpp.matrixB[$index].toString()}"
 								m-format>
 								{{step.data.lpp.matrixB[$index].toString()}}
 							</td>
@@ -121,10 +141,14 @@
 							<td ng-repeat="value in step.data.lpp.fx"
 								contenteditable
 								ng-model="step.data.lpp.matrixC[$index]"
+								ng-init="originalValue = step.data.lpp.matrixC[$index].toString()"
+								ng-class="{mistake: originalValue !== step.data.lpp.matrixC[$index].toString()}"
 								m-format
 								>{{step.data.lpp.matrixC[$index].toString()}}</td>
 							<td ng-model="step.data.anglePoint.value"
 								m-format
+								ng-init="step.data.anglePoint.originalValue = step.data.anglePoint.value.toString()"
+								ng-class="{mistake: step.data.anglePoint.originalValue !== step.data.anglePoint.value.toString()}"
 								contenteditable="true">{{step.data.anglePoint.value.toString()}}</td>
 						</tr>
 						<tr ng-if="step.type === 'first-simplex-table'">
@@ -134,18 +158,24 @@
 					</tbody>
 				</table>
 				<!-- <p class="math"></p> -->
-				<p>Розв'язуючий рядок</p>
-				<select ng-options="item.index as (item.index + 1) for item in rowIndexes" ng-model="step.data.solvingElement.rowIndex" ng-change="setSolvingElementValue()">
-				</select>
-				<p>Розв'язуючий стовпчик</p>
-				<select ng-options="item.index as (item.index + 1) for item in colIndexes" ng-model="step.data.solvingElement.colIndex" ng-change="setSolvingElementValue()">
-				</select>
-				<button ng-click="recalculateTable()">OK</button>
+				<div class="flex-container">
+					<div>
+						<label>Розв'язуючий рядок</label>
+						<select ng-options="item.index as (item.index + 1) for item in step.rowIndexes" ng-model="step.data.solvingElement.rowIndex" ng-change="setSolvingElementValue()">
+						</select>
+					</div>
+					<div>
+						<label>Розв'язуючий стовпчик</label>
+						<select ng-options="item.index as (item.index + 1) for item in step.colIndexes" ng-model="step.data.solvingElement.colIndex" ng-change="setSolvingElementValue()">
+						</select>	
+					</div>	
+				</div>			
 			</div>
+		<button ng-click="recalculateTable()">OK</button>
 	</div>
 
 	<div class="step" ng-repeat="step in resultSteps">
-		<p>{{step.message}}</p>
-		<p>{{step.resultString}}</p>
+		<p class="caption">{{step.message}}</p>
+		<p class="math">{{step.resultString}}</p>
 	</div>
 </div>

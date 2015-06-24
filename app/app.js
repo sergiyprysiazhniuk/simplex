@@ -22,7 +22,17 @@ app
 		$stateProvider
 			.state('main', {
 				url: "/",
-				templateUrl: "views/main.html"
+				templateUrl: "views/main.html",
+				controller: "setModeCtrl"
+			})
+			.state('input-probelm-condition', {
+				url: "/input-probelm-condition",
+				templateUrl: "views/input-probelm-condition.html"
+			})
+			.state('load', {
+				url: "/load",
+				templateUrl: "views/load.html",
+	        	controller: "loadCtrl"
 			})
 			.state('size', {
 				url: "/size",
@@ -49,12 +59,12 @@ app
 				        controller: "trainingCtrl"
 					}
 			    }
-			})
+			})/*
 			.state('testing', {
 				url: "/testing",
 				templateUrl: "views/testing.html",
 	        	controller: "testingCtrl"
-			})
+			})*/
 			.state('editable', {
 				url: "/editable",
 				views: {

@@ -35,6 +35,15 @@ angular.module("app")
 	}
 )
 
+/*.filter('currentColIndexes', ["utilFactory", function(util){
+	return function(input, context) {		
+			return util.generateArray(context.data.lpp.n, function(_, index){
+				return {index: index};
+			});
+		};
+	}]
+)*/
+
 .controller("resultCtrl", 
 		["$scope",
 		"utilFactory",
@@ -64,14 +73,6 @@ angular.module("app")
 					description: "Звичайна"
 				}
 			];
-
-			$scope.rowIndexes = util.generateArray(m, function(_, index){
-				return {index: index};
-			});
-
-	    	$scope.colIndexes = util.generateArray(n, function(_, index){
-				return {index: index};
-			});
 
 			$scope.setSolvingElementValue = function(){
 				console.log("setSolvingElementValue", this);
@@ -121,6 +122,18 @@ angular.module("app")
 			$scope.solvingSteps = app.solvingSteps;
 			$scope.resultSteps = app.resultSteps;
 
+			$scope.$watchCollection("solvingSteps", function(steps){
+				steps.forEach(function(step){
+					step.rowIndexes = util.generateArray(step.data.lpp.m, function(_, index){
+						return {index: index};
+					});
+
+			    	step.colIndexes = util.generateArray(step.data.lpp.n, function(_, index){
+						return {index: index};
+					});
+				});
+			});
+
 			$scope.cancelEdit = function(){
 				this.editMode = false;
 			};
@@ -168,12 +181,37 @@ angular.module("app")
 				app.updateResultSteps();
 			};
 
+			/*$scope.matrixElementUpdate = function(value){
+				if(value.toString() !== this.originalValue){
+					this.edited = true;
+				}else{
+					this.edited = false;
+				}
+			};
+			$scope.anglePointUpdate = function(){
+				if(this.step.data.anglePoint.value.toString() !== this.step.data.anglePoint.originalValue){
+					this.step.data.anglePoint.edited = true;
+				}else{
+					this.step.data.anglePoint.edited = false;
+				}
+			};
+
+			$scope.variableEdit = function(){
+				if(this.variable.value.toString() !== this.variable.originalValue){
+					this.variable.edited = true;
+				}else{
+					this.variable.edited = false;
+				}
+			};*/
+
 			$scope.matrixAElementUpdate = function(){
 				var solvingElement = this.$parent.$parent.step.data.solvingElement;
 
 				if(solvingElement.colIndex === this.$index && solvingElement.rowIndex === this.$parent.$index){
 					this.$parent.$parent.step.data.solvingElement.value = this.variable.value.clone();
-				}
+				}		
+
+				// $scope.variableEdit.call(this);				
 			};
 
 			$scope.notZero = function(item){

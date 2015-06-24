@@ -20,16 +20,10 @@ angular.module("module.simplexMethod", [
 		SimplexMethod.prototype.next = function(){
 			this.buildTable();
 
-			// console.log("GET_SOLVING_COLUMN", this._getSolvingColumn());
-
 			if(this.isImprovable()){
 				this.updateSolvingElement();
-
-
-				this.updateBasis();
-			}/*else{
-				this.solvingElement = null;
-			}*/
+			}
+			this.updateBasis();
 		};
 
 		SimplexMethod.prototype.clone = function(){
@@ -43,10 +37,6 @@ angular.module("module.simplexMethod", [
 		};
 
 		SimplexMethod.prototype.getBasis = function(){	
-
-
-			// console.log("LPP", this.lpp);
-
 			return this.lpp.matrixA.map(function(limitation, limitationIndex){
 				var variable = limitation.filter(function(limitationElement, elementIndex){
 						return limitationElement.value.equalTo(1) && !this._getMatrixAColumn(elementIndex).filter(function(item, index){
@@ -54,7 +44,6 @@ angular.module("module.simplexMethod", [
 						}).length;
 					}, this)[0];
 
-				// console.log("VARIABLE", limitation);
 
 				return {
 					limitation: limitationIndex,
@@ -69,7 +58,8 @@ angular.module("module.simplexMethod", [
 		};
 
 		SimplexMethod.prototype.updateBasis = function(){
-			var row = this.solvingElement.rowIndex,
+			this.basis = this.getBasis();
+			/*var row = this.solvingElement.rowIndex,
 				col = this.solvingElement.colIndex;
 
 			this.lpp.matrixB.forEach(function(item, index){
@@ -84,7 +74,7 @@ angular.module("module.simplexMethod", [
 					name: this.lpp.matrixA[row][col].name,
 					value: this.lpp.matrixB[row]
 				}
-			});
+			});*/
 		};
 
 		SimplexMethod.prototype.updateSolvingElement = function(){

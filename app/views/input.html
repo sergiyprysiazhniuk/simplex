@@ -1,11 +1,11 @@
-<div id="data">
-	<h2>Система обмежень.</h2>
+<!-- <div id="data"> -->
+	<h3>Система обмежень.</h3>
 	
 	<div class="input-limitations">
 		<table class="matrix-a">
 			<tr ng-repeat="row in A">
 				<td ng-repeat="variable in row">
-					<input ng-model="variable.value" m-format/><span>{{variable.name}}<sub>{{variable.index}}</sub></span>
+					<input type="text" ng-model="variable.value" m-format/><span>{{variable.name}}<sub>{{variable.index + 1}}</sub></span>
 				</td>
 			</tr>
 		</table>
@@ -31,14 +31,14 @@
 		<table>
 			<tr>
 				<td ng-repeat="condition in notNegativeConditions">
-					<span></span>
+					<span>{{fx[$index].name}}</span><sub>{{fx[$index].index + 1}}</sub>
 					<select ng-model="condition.value" ng-options="availableCondition.value as availableCondition.label for availableCondition in availableConditions"></select>
 				</td>
 			</tr>
 		</table>
 	</div>
 
-	<h2>Функція цілі.</h2>
+	<h3>Функція цілі.</h3>
 
 	<div class="function">
 		<table>
@@ -60,4 +60,4 @@
 	</div>
 
 	<button ng-click="next()">Далі</button>
-</div>
+<!-- </div> -->

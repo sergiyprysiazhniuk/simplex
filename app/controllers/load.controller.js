@@ -1,6 +1,6 @@
 angular.module("app")
 	
-.controller("sizeCtrl",	[
+.controller("loadCtrl",	[
 	"$http",
 	"$scope",
 	"mFactory",
@@ -8,12 +8,11 @@ angular.module("app")
 	"appStateService",
 
     function($http, $scope, mFactory, Variable, app){
-		$scope.m = app.inputData.m;
-		$scope.n = app.inputData.n;
+		// $scope.m = app.inputData.m;
+		// $scope.n = app.inputData.n;
+		$scope.mode = app.mode;
 		$scope.problems = [];
 		M = mFactory.M;
-
-		$scope.mode = app.mode;
 
 		$scope.next = function(){
 			app.inputData.m = parseInt($scope.m);
@@ -25,7 +24,7 @@ angular.module("app")
 			app.inputData = this.step;
 		};
 
-		/*$http.get('/problems-list').success(function(data){
+		$http.get('/problems-list').success(function(data){
 
 			data.forEach(function(problem, index){
 				var input = {};
@@ -73,5 +72,5 @@ angular.module("app")
 
 		$scope.notZero = function(item){
 			return !item.value.equalTo(0);
-		};*/
+		};
 	}]);

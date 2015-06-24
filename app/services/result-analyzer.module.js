@@ -60,6 +60,12 @@ angular.module("module.resultAnalyzer", ["module.util", "module.variable", "modu
 				});
 			}
 
+			anglePoint.vector = anglePoint.vector.map(function(item){
+				return item.value;
+			});
+
+			console.log("WWWWWWWWWWWWWW", util.clone(anglePoint));
+
 			return util.clone(anglePoint);
 		}
 
