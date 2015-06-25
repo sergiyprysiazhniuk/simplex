@@ -1,0 +1,35 @@
+.alert{
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.6);
+	z-index: 10;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity .4s;
+}
+.alert.show{
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.alert-message{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	position: absolute;
+	padding: 30px 50px 20px 50px;
+	background: #eeeeee;
+	top: 50%;
+	left: 50%;
+	transform: translate3d(-50%, -50%, 0);
+	text-align: center;
+	max-width: 600px;
+	min-width: 300px;
+}
+.alert-close{
+	padding: 10px 15px;
+	margin-top: 30px;
+}

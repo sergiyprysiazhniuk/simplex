@@ -44,6 +44,11 @@ app
 				templateUrl: "views/training-size.html",
 	        	controller: "sizeCtrl"
 			})
+			.state('experiment', {
+				url: "/experiment",
+				templateUrl: "views/experiment.html",
+	        	controller: "experimentCtrl"
+			})
 			.state('training', {
 				url: "/training",
 				views: {

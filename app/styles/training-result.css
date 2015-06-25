@@ -1,0 +1,97 @@
+#training{
+    padding-top: 10px;
+    width: 760px;
+    margin: 20px auto;
+    /* text-align: center; */
+    border: 1px solid #868686;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.02);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#training th,
+#training td:first-of-type{
+    height: 36px;
+    font-family: serif;
+    font-weight: bold;
+    font-style: italic;
+}
+#training{
+    /* padding: 10px; */
+    position: relative;
+}
+#training{
+    padding-bottom: 85px;
+}
+
+#training input{
+	margin: 0 0 0 5px;
+}
+
+.step:last-of-type{
+    border-bottom: none;;
+}
+
+#training .close-popup{
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	width: 25px;
+	height: 25px;
+	margin: 0;
+	background: url("../images/close.png") no-repeat center;
+	background-size: 25px 25px;
+	border: none;
+	box-sizing: border-box;
+	display: block;
+}
+#training .flex-container{
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+    /* padding: 0 10%; */
+}
+
+#training .step button{
+    margin: 20px auto;
+    padding: 8px 40px;
+} 
+
+#training .step .edit-mode button{
+    padding: 6px 20px;
+}
+
+#training .edit-mode{
+    display: flex;    
+    flex-direction: column;
+    align-items: center;
+}
+
+#training .actions{
+    display: flex;
+    margin-top: 15px;
+}
+
+#training .actions button{
+    margin: 0 20px;
+}
+
+#training .simplex-table{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#training .select-flex-container{
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+    padding: 0 10%;
+}
+#training .next-table-options{
+    margin-top: 20px;
+    
+    width: 100%;
+    /* margin: 20px 6px 0; */
+}

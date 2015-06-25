@@ -1,4 +1,4 @@
-<div id="result">
+<div id="training">
 	<h2>Result</h2>
 
 	<div class="step" ng-repeat="step in trainingSteps">
@@ -20,11 +20,10 @@
 							</td>
 							<td ng-repeat="variable in row"
 								ng-model="variable.value"
-								ng-class="{mistake: row[$index].value.incorrect}"
 								m-format
-								ng-class="{around: step.data.solvingElement.rowIndex === $parent.$index && step.data.solvingElement.colIndex === $index}"
+								ng-class="{mistake: row[$index].value.incorrect, around: step.data.solvingElement.rowIndex === $parent.$index && step.data.solvingElement.colIndex === $index && step.nextAction === 'improvable'}"
 								contenteditable
-								ng-change="matrixAElementUpdate()">{{variable.value.toString()}}</td>
+								ng-change="changeHandler()">{{variable.value.toString()}}</td>
 							<td contenteditable 
 								ng-class="{mistake: step.data.lpp.matrixB[$index].incorrect}"
 								ng-model="step.data.lpp.matrixB[$index]"
@@ -54,23 +53,37 @@
 						</tr>
 					</tbody>
 				</table>
-				<select ng-class="{mistake: step.selectedIncorrectAction}" ng-options="action.type as action.text for action in actions" ng-model="step.nextAction" ng-change="compareAction()">
-					<option value="">Виберіть дію</option>
-				</select>
-				<div ng-show="step.nextAction === 'improvable'">
-					<p>Розв'язуючий рядок</p>
-					<select ng-init="step.data.solvingElement.rowIndex = rowIndexes[0].index" ng-options="item.index as (item.index + 1) for item in rowIndexes" ng-model="step.data.solvingElement.rowIndex">
-					</select>
-					<p>Розв'язуючий стовпчик</p>
-					<select ng-init="step.data.solvingElement.colIndex = colIndexes[0].index" ng-options="item.index as (item.index + 1) for item in colIndexes" ng-model="step.data.solvingElement.colIndex">
-					</select>
 
-					<p>Змінна, яка виводиться з базису</p>
-					<select ng-init="step.removedFromBasis = step.data.basis[0]" ng-options="item.displayName for item in step.data.basis" ng-model="step.removedFromBasis"></select>
-					<p>Змінна, яка вводиться в базис</p>
-					<select ng-init="step.addedToBasis = (step.variables | notBasisVariables:step)[0]" ng-options="item.displayName for item in step.variables | notBasisVariables:step" ng-model="step.addedToBasis"></select>
+				<button title="Заповнити таблицю даними з попереднього кроку" ng-click="autoComplete(step.data)">Автозаповнення</button>
+
+				<select class="action-choice" ng-class="{mistake: step.selectedIncorrectAction}" ng-options="action.type as action.text for action in actions" ng-model="step.nextAction" ng-change="compareAction()">
+					<option value="">Виберіть наступну дію</option>
+				</select>
+				<div class="next-table-options" ng-show="step.nextAction === 'improvable'">
+					<div class="select-flex-container">
+						<div>
+							<label>Розв'язуючий рядок</label>
+							<select ng-init="step.data.solvingElement.rowIndex = rowIndexes[0].index" ng-options="item.index as (item.index + 1) for item in rowIndexes" ng-model="step.data.solvingElement.rowIndex">
+							</select>
+						</div>
+						<div>
+							<label>Розв'язуючий стовпчик</label>
+							<select ng-init="step.data.solvingElement.colIndex = colIndexes[0].index" ng-options="item.index as (item.index + 1) for item in colIndexes" ng-model="step.data.solvingElement.colIndex">
+							</select>
+						</div>							
+					</div>
+					<div class="select-flex-container">
+					<div>
+						<label>Змінна, яка виводиться з базису</label>
+						<select ng-init="step.removedFromBasis = step.data.basis[0]" ng-options="item.displayName for item in step.data.basis" ng-model="step.removedFromBasis"></select>
+					</div>
+					<div>
+						<label>Змінна, яка вводиться в базис</label>
+						<select ng-init="step.addedToBasis = (step.variables | notBasisVariables:step)[0]" ng-options="item.displayName for item in step.variables | notBasisVariables:step" ng-model="step.addedToBasis"></select>
+						</div>
+					</div>					
 				</div>
-				<button ng-click="confirm()">OK</button>
+				<button ng-hide="step.selectedIncorrectAction || !step.nextAction" ng-click="confirm()">OK</button>
 			</div>
 	</div>
 </div>

@@ -1,4 +1,4 @@
-<div id="result">
+<div id="result" ng-show="solvingSteps.length">
 	<div ng-class="{'only-header': step.type === 'header'}" class="step" ng-repeat="step in improvementSteps">
 		<p class="caption">{{step.data.improvementData.stepInfo.message}}</p>
 		<div ng-if="step.type === 'goal-function'">

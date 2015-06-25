@@ -1,0 +1,15 @@
+{
+	"name": "Варіант 5",
+	"m": 3,
+	"n": 3,
+	"matrixA": [
+		[1, 1, 1],
+		[1, 1, 1],
+		[1, 1, 1]
+	],
+	"matrixB": [1, 1, 1],
+	"signs": ["=", ">", "="],
+	"notNegativeConditions": [true, true, true],
+	"fx": [1, 1, 1],
+	"extreme": "min"
+}

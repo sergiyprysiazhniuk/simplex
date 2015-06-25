@@ -6,10 +6,19 @@
 	<link rel="stylesheet" href="styles/start.css">
 	<link rel="stylesheet" href="styles/size.css">
 	<link rel="stylesheet" href="styles/input.css">
+	<link rel="stylesheet" href="styles/training-result.css">
+	<link rel="stylesheet" href="styles/alert.css">
 	<link rel="stylesheet" href="styles/style.css">
 </head>
 <body>	
 	<div ui-view></div>
+
+	<div class="alert" ng-controller="validateMessageCtrl" ng-class="{show: showAlert}">
+		<div class="alert-message">
+			<p class="validate-message">{{message}}</p>
+			<button class="alert-close" ng-click="hideAlert()">OK</button>
+		</div>		
+	</div>
 
 	<script src="bower_components/angular/angular.min.js"></script>
 	<script src="bower_components/angular-route/angular-route.min.js"></script>
@@ -17,7 +26,7 @@
 	<script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
 	<script src="bower_components/angular-contenteditable/angular-contenteditable.js"></script>
 
-	<script src="app.js"></script>
+	<script src="index.js"></script>
 
 	<script src="services/util.module.js"></script>
 	<script src="services/fraction.module.js"></script>
@@ -25,20 +34,24 @@
 	<script src="services/variable.module.js"></script>
 	<script src="services/app-data.module.js"></script>
 	<script src="services/training.module.js"></script>
+	<script src="services/experiment.module.js"></script>
 	
 	<script src="services/simplex-method.module.js"></script>
 	<script src="services/improvement-data.factory.js"></script>
 	<script src="services/lpp-improver.module.js"></script>
 	<script src="services/result-analyzer.module.js"></script>
+	<script src="services/validate-massage.service.js"></script>
 
 	<script src="modules/start/start.module.js"></script>
 	
 
+	<script src="controllers/validate-message.controller.js"></script>
 	<script src="controllers/set-mode.controller.js"></script>
 	<script src="controllers/load.controller.js"></script>
 	<script src="controllers/size.controller.js"></script>
 	<script src="controllers/input.controller.js"></script>
 	<script src="controllers/result.controller.js"></script>
 	<script src="controllers/training.controller.js"></script>
+	<script src="controllers/experiment.controller.js"></script>
 </body>
 </html>

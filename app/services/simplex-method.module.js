@@ -83,12 +83,21 @@ angular.module("module.simplexMethod", [
 
 		SimplexMethod.prototype.getSolvingElement = function(){
 			var colIndex = this._getSolvingColumn(),
+				rowIndex,
+				value;
+
+			if(colIndex !== -1){
 				rowIndex = this._getSolvingRow(colIndex);
+				value = this.lpp.matrixA[rowIndex][colIndex].value.clone();
+			}else{
+				rowIndex = -1;
+				value = null;
+			}
 
 			return {
 				colIndex: colIndex,
 				rowIndex: rowIndex,
-				value: this.lpp.matrixA[rowIndex][colIndex].value.clone()
+				value: value
 				// value: this.lpp.matrixA[rowIndex][colIndex].value
 			}
 		};

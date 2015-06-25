@@ -2,7 +2,7 @@
 <div id="problemsList">
     <div class="step" ng-repeat="step in problems">
         <h3>{{step.name}}</h3>
-        <div class="math function" ng-hide="editMode" ng-click="activateEditMode()">
+        <div class="math function" ng-hide="editMode">
             <span>f(x)=</span>
             <span ng-repeat="variable in step.fx | filter:notZero">
                 {{variable.value | variable:$index}}{{variable.name}}<sub>{{variable.index + 1}}</sub>

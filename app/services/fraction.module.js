@@ -11,7 +11,7 @@ angular.module("module.fraction", [])
 			/*if(typeof number !== "number"){		
 				throw new Error(number + " is not a Number");
 			}*/
-			return new Fraction(parseFloat(number), 1);
+			return new Fraction(parseInt(number), 1);
 		};
 
 		function Fraction(numerator, denominator){
@@ -20,16 +20,16 @@ angular.module("module.fraction", [])
 			if(arguments.length === 1 && typeof numerator === "string"){
 				if(numerator.search('/') > -1){
 					numbers = numerator.split('/');
-					numerator = parseFloat(numbers[0]);
-					denominator = parseFloat(numbers[1]);
+					numerator = parseInt(numbers[0]);
+					denominator = parseInt(numbers[1]);
 				}
 			}else if(numerator instanceof Fraction){
 				denominator = numerator.denominator;
 				numerator = numerator.numerator;
 			}
 
-			this.numerator = parseFloat(numerator);
-			this.denominator = parseFloat(denominator || 1);			
+			this.numerator = parseInt(numerator);
+			this.denominator = parseInt(denominator || 1);			
 		}
 
 		Fraction.prototype.toString = function(){
@@ -39,21 +39,20 @@ angular.module("module.fraction", [])
 			return this.numerator + "/" + this.denominator;
 		};
 
+		function gcd(a,b){
+	    	return b ? gcd(b, a%b) : a;
+	  	}
+
+	  	function lcm(a, b) { 
+			return ( a / gcd(a,b) ) * b; 
+		}
+
 		Fraction.prototype.reduce = function(){
 			var numerator = this.numerator,
-			 	denominator = this.denominator;
+			 	denominator = this.denominator,
+			 	g = Math.abs(gcd(numerator, denominator));
 
-			if(this.numerator === 0){
-				return new Fraction(0);
-			}
-			for(var i = 1; i <= denominator; i++){
-				if(numerator % i === 0 && denominator % i === 0){
-					numerator /= i;
-					denominator /= i;
-					i = 1;
-				}
-			}
-			return new Fraction(numerator, denominator);
+			return new Fraction(numerator/g, denominator/g);
 		};
 
 		Fraction.prototype.add = function(fraction){
@@ -69,7 +68,8 @@ angular.module("module.fraction", [])
 				return new Fraction(this.numerator + fraction.numerator, this.denominator).reduce();
 			}
 
-			scm = getSCM(this.denominator, fraction.denominator);
+			// scm = getSCM(this.denominator, fraction.denominator);
+			scm = lcm(this.denominator, fraction.denominator);
 
 			return new Fraction((this.numerator * (scm / this.denominator)) + (fraction.numerator * (scm / fraction.denominator)),
 				scm).reduce();
@@ -88,7 +88,8 @@ angular.module("module.fraction", [])
 				return new Fraction(this.numerator - fraction.numerator, this.denominator).reduce();
 			}
 			
-			scm = getSCM(this.denominator, fraction.denominator)
+			// scm = getSCM(this.denominator, fraction.denominator);
+			scm = lcm(this.denominator, fraction.denominator);
 			return new Fraction((this.numerator * (scm / this.denominator)) - (fraction.numerator * (scm / fraction.denominator)),
 				scm).reduce();
 		};
@@ -142,7 +143,7 @@ angular.module("module.fraction", [])
 			return new Fraction(this.numerator, this.denominator);
 		};
 
-		function getSCM(n1, n2){
+		/*function getSCM(n1, n2){
 			var max = Math.max(n1, n2),
 			 	min = Math.min(n1, n2),
 			  	i;
@@ -153,7 +154,7 @@ angular.module("module.fraction", [])
 				}
 			}
 			return 0;
-		}
+		}*/
 
 		
 

@@ -23,10 +23,13 @@ angular.module("app")
 		"utilFactory",
 		"appStateService",
 		"mFactory",
+		"validateMessageService",
 
-	    function($scope, training, util, app, mFactory){
+	    function($scope, training, util, app, mFactory, validation){
 	    	var m = app.inputData.m,
-				n = app.inputData.n;
+				n = app.inputData.n,
+				previousStep = app.inputData;
+
 
 	    	$scope.trainingSteps = training.trainingSteps;
 	    	$scope.simplexTables = training.simplexTables;
@@ -64,6 +67,10 @@ angular.module("app")
 
 			$scope.compareAction = function(){
     			this.step.selectedIncorrectAction = (training.getActualAction() !== this.step.nextAction);
+			};
+
+			$scope.getActualAction = function(){
+    			training.getActualAction();
 			};
 
 
@@ -135,8 +142,23 @@ angular.module("app")
 	    		actualLpp.anglePoint.value.incorrect = !actualLpp.anglePoint.value.equalTo(expectedLpp.anglePoint.value);
 	    	}
 
+	    	$scope.autoComplete = function(currentStep){
+	    		console.log("previousStep", previousStep.matrixC);
+
+	    		// currentStep.matrixA.splice(0);
+	    		currentStep.lpp.matrixA = util.clone(previousStep.matrixA);
+	    		currentStep.lpp.matrixB = util.clone(previousStep.matrixB);
+	    		if(previousStep.matrixC){
+	    			currentStep.lpp.matrixC = util.clone(previousStep.matrixC);	
+	    		}	    		
+	    	};
+
 	    	$scope.confirm = function(){
 	    		console.log("step", this);
+				
+				validation.alert("Заповніть всі клітинки симплекс-таблиці.");
+
+
 	    		var isCorrectSolving,
 	    			rowIndex = this.step.data.solvingElement.rowIndex,
 	    			colIndex = this.step.data.solvingElement.colIndex;
@@ -155,9 +177,15 @@ angular.module("app")
 	    		compareTables(this.step.data, this.step.expectedData);
 	    	};
 
-	    	/*$scope.compareBasis = function(actual, expected){
+	    	$scope.changeHandler = function(){
+	    		// console.log("XXXXXXXXXXXXXXXXXXCCCCCCCCCCCCCCCCCVVVVVVVVVVVVVVVVVV");
+	    	};
 
-	    	};*/
+	    	/*function validate
+
+	    	$scope.$watchCollection('trainingSteps', function(){
+	    		console.log("XXXXXXXXXXXXXXXXXXCCCCCCCCCCCCCCCCCVVVVVVVVVVVVVVVVVV");
+	    	});*/
 
 	    	$scope.setLimitationIndex = function(context, index){
 	    		context.limitation = index;
