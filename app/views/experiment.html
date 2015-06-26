@@ -1,5 +1,13 @@
-<button ng-click="start()">Start experiment</button>
-<button ng-click="cyclesPercent(90, 90)">Cylces percent</button>
+<!-- <button ng-click="start()">ОК</button> -->
+<!-- <button ng-click="cyclesPercent(90, 90)">Cylces percent</button> -->
+
+<div class="options">
+	<p class="option-element">Мінімальна розмірність<br> задачі <input type="number" ng-model="min"></p>
+	<p class="option-element">Максимальна розмірність<br> задачі <input type="number" ng-model="max"></select></p>
+	<p class="option-element">Кількість розв'язань <input type="number" ng-model="count"></select></p>	
+</div>
+
+<button class="start-experiment" ng-click="start(min, max, count)">ОК</button>
 
 <div id="experiment">
 	<table class="header">
@@ -9,4 +17,13 @@
 			<th>Зациклювання, %</th>
 		</tr>
 	</table>
+	<div class="results">
+		<table>
+			<tr ng-repeat="iteration in iterations">
+				<td>{{iteration.size}}</td>
+				<td>{{iteration.time}}</td>
+				<td>{{iteration.cycles}}</td>
+			</tr>
+		</table>	
+	</div>
 </div>

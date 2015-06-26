@@ -1,0 +1,43 @@
+#experiment{
+	width: 800px;
+	margin: 30px auto;
+}
+
+#experiment table{
+	/* width: 90%; */
+	margin: 0;
+}
+#experiment th,
+#experiment td{
+	width: 30%;
+	margin: 0;
+	width: 260px;
+}
+
+#experiment .results{
+	height: 500px;
+	overflow: auto;
+}
+#experiment .results table{
+
+}
+
+.option-element{
+	display: flex;
+  	align-items: center;
+  	text-align: center;
+}
+.option-element input{
+	margin-left: 20px;
+}
+
+.options{
+	display: flex;
+	justify-content: space-around;
+	margin-top: 30px;
+}
+
+.start-experiment{
+	padding: 10px 20px;
+	margin: 10px auto;
+}
