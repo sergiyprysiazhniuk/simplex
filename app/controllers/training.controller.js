@@ -75,11 +75,14 @@ angular.module("app")
 
 
 	    	function checkBasis(actualLpp, expectedLpp){
+	    		var isCorrect = true;
+
 	    		actualLpp.basis = actualLpp.basis.map(function(item, index){
 	    			var isBasisVariable;
 
 	    			if(!expectedLpp.lpp.matrixA[item.limitation][item.index].value.equalTo(1)){
 	    				item.incorrect = true;
+	    				isCorrect = false;
 	    				return item;
 	    			}
 
@@ -95,10 +98,13 @@ angular.module("app")
 
 					if(!isBasisVariable){
 						item.incorrect = true;
+						isCorrect = false;
 					}
 
 	    			return item;
 	    		});
+
+	    		return isCorrect;
 	    	}
 
 	    	function isCorrectSolvingElement(actualLpp, expectedLpp){
@@ -123,23 +129,43 @@ angular.module("app")
 	    	}
 
 	    	function compareTables(actualLpp, expectedLpp){
+	    		var alowNextStep;
+
 	    		expectedLpp.lpp.matrixB.forEach(function(item, index){
 	    			actualLpp.lpp.matrixB[index].incorrect = !item.equalTo(actualLpp.lpp.matrixB[index]);
 	    		});
+
+	    		alowNextStep = actualLpp.lpp.matrixB.every(function(item){
+	    			return !item.incorrect;
+	    		})
 
 	    		expectedLpp.lpp.matrixC.forEach(function(item, index){
 	    			actualLpp.lpp.matrixC[index].incorrect = !item.equalTo(actualLpp.lpp.matrixC[index]);
 	    		});
 
+	    		alowNextStep = alowNextStep && actualLpp.lpp.matrixC.every(function(item){
+	    			return !item.incorrect;
+	    		})
+
 	    		expectedLpp.lpp.matrixA.forEach(function(row, rowIndex){
 					row.forEach(function(item, index){
 	    				actualLpp.lpp.matrixA[rowIndex][index].value.incorrect = !item.value.equalTo(actualLpp.lpp.matrixA[rowIndex][index].value);
 	    			});
+
+	    			alowNextStep = alowNextStep && row.every(function(item){
+		    			return !item.value.incorrect;
+		    		})
 	    		});
 
 	    		console.log("expectedLpp.anglePoint", expectedLpp.anglePoint, actualLpp.anglePoint);
 
 	    		actualLpp.anglePoint.value.incorrect = !actualLpp.anglePoint.value.equalTo(expectedLpp.anglePoint.value);
+	    	
+	    		alowNextStep = alowNextStep && !actualLpp.anglePoint.value.incorrect;
+
+	    		console.log("alowNextStep", alowNextStep);
+
+	    		return alowNextStep;
 	    	}
 
 	    	$scope.autoComplete = function(currentStep){
@@ -156,26 +182,56 @@ angular.module("app")
 	    	$scope.confirm = function(){
 	    		console.log("step", this);
 				
-				validation.alert("Заповніть всі клітинки симплекс-таблиці.");
+				// validation.alert("Заповніть всі клітинки симплекс-таблиці.");
 
 
-	    		var isCorrectSolving,
+	    		var solving,
 	    			rowIndex = this.step.data.solvingElement.rowIndex,
-	    			colIndex = this.step.data.solvingElement.colIndex;
+	    			colIndex = this.step.data.solvingElement.colIndex,
+	    			isCorrectBasis, isCorrectTable, isCorrectSolving;
 
 	    		this.step.expectedData = training.simplexTables[training.simplexTables.length - 1];
 
-	    		checkBasis(this.step.data, this.step.expectedData);
-	    		isCorrectSolving = isCorrectSolvingElement(this.step.data, this.step.expectedData);
+	    		isCorrectBasis = checkBasis(this.step.data, this.step.expectedData);
+	    		solving = isCorrectSolvingElement(this.step.data, this.step.expectedData);
 	    		
-	    		if(isCorrectSolving === "not-rational"){
+	    		isCorrectSolving = solving === "correct";
+
+	    		if(solving === "not-rational"){
 	    			this.step.expectedData.solvingElement.rowIndex = rowIndex;
 	    			this.step.expectedData.solvingElement.colIndex = colIndex;
 	    			this.step.expectedData.solvingElement.value = this.step.expectedData.lpp.matrixA[rowIndex][colIndex].value;
 	    		}
 
-	    		compareTables(this.step.data, this.step.expectedData);
+	    		isCorrectTable = compareTables(this.step.data, this.step.expectedData);
+	    		
+	    		console.log("isCorrectTable && isCorrectBasis && isCorrectSolving", isCorrectTable, isCorrectBasis, isCorrectSolving);
+	    		
+	    		if(isCorrectTable && isCorrectBasis && isCorrectSolving){
+	    			training.next();
+	    		}
+	    		/*if(this.step.nextAction === "solved" && isCorrectTable){
+
+	    		}*/
 	    	};
+
+	    	$scope.confirmResult = function(){
+	    		this.step.expectedData = training.simplexTables[training.simplexTables.length - 1];
+	    		console.log("!!!confirmResult!!!", this);
+	    		this.step.userAnglePointValue.incorrect = !this.step.expectedData.anglePoint.value.equalTo(this.step.userAnglePointValue);
+	    		this.step.data.anglePoint.vector.forEach(function (item, index){
+	    			item.incorrect = !this.step.expectedData.anglePoint.vector[index].equalTo(item);
+	    		}, this);
+
+	    		$scope.trainingEnd = this.step.data.anglePoint.vector.every(function(item){
+	    			return !item.incorrect;
+	    		});
+	    	};
+
+	    	/*$scope.confirmResult = function(){
+	    		console.log("!!!confirmResult!!!", this);
+
+	    	};*/
 
 	    	$scope.changeHandler = function(){
 	    		// console.log("XXXXXXXXXXXXXXXXXXCCCCCCCCCCCCCCCCCVVVVVVVVVVVVVVVVVV");
@@ -191,7 +247,7 @@ angular.module("app")
 	    		context.limitation = index;
 	    	};
 
-	    	$scope.next = function(){
-				training.next();
+	    	$scope.start = function(){
+				training.start();
 			};	    	
 		}]);

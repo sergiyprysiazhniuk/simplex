@@ -96,7 +96,7 @@ angular.module("app")
 					app.start();
 					break;
 				case "/training":
-					training.next();
+					training.start();
 					break;	
 			}
 		};

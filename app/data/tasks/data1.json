@@ -10,6 +10,6 @@
 	"matrixB": [2, 3, 12],
 	"signs": ["=", "=", "="],
 	"notNegativeConditions": [true, true, true, true, true],
-	"fx": [-2, -1, 0, 0, 0],
+	"fx": [2, -1, 0, 0, 0],
 	"extreme": "min"
 }

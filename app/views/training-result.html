@@ -57,7 +57,7 @@
 				<select class="action-choice" ng-class="{mistake: step.selectedIncorrectAction}" ng-options="action.type as action.text for action in actions" ng-model="step.nextAction" ng-change="compareAction()">
 					<option value="">Виберіть наступну дію</option>
 				</select>
-				<div class="next-table-options" ng-show="step.nextAction === 'improvable'">
+				<div class="next-table-options" ng-show="step.nextAction === 'improvable' && !step.selectedIncorrectAction">
 					<div class="select-flex-container">
 						<div>
 							<label>Розв'язуючий рядок</label>
@@ -81,7 +81,34 @@
 						</div>
 					</div>					
 				</div>
-				<button ng-hide="step.selectedIncorrectAction || !step.nextAction" ng-click="confirm()">OK</button>
+
+				<div class="angle-point" ng-show="step.nextAction === 'solved' && !step.selectedIncorrectAction">
+					<p>Введіть координати кутової точки та значення функції цілі в цій точці.</p>
+					<div>
+						<span>x*( </span>
+						<span ng-repeat="point in step.data.anglePoint.vector track by $index">
+							<input type="text"
+								ng-model="step.data.anglePoint.vector[$index]"
+								ng-class="{mistake: step.data.anglePoint.vector[$index].incorrect}"
+								m-format>							
+						</span>
+						<span>)</span>
+						<span>; f(x*) = <input type="text"
+								ng-model="step.userAnglePointValue"
+								ng-class="{mistake: step.userAnglePointValue.incorrect}"
+								m-format></span>	
+					</div>					
+
+					<!-- <button ng-click="recalculate()">OK</button> -->
+					<!-- <button class="close-popup" ng-click="cancelEdit()"></button> -->
+					<button ng-click="confirmResult()">OK</button>
+				</div>
+
+				<!-- <button ng-hide="step.selectedIncorrectAction || !step.nextAction" ng-click="confirm()">OK</button> -->
 			</div>
+	</div>
+	<div class="training-finish" ng-show="trainingEnd">
+		<p>Задачу розв'язано.</p>
+		<button ui-sref="input-probelm-condition">Ввести іншу задачу</button>
 	</div>
 </div>

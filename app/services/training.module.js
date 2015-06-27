@@ -17,13 +17,17 @@ angular.module("module.trainingState", ["module.fraction", "module.m"])
 
 		this.next = function(){
 			var step = {
-				type: "first-simplex-table",
+				type: "simplex-table",
 				data: {}
-			};
+			},
+			sm = this.simplexTables[this.simplexTables.length - 1];
 
 			step.data.lpp = generateEmptyLpp(app.inputData.m, app.inputData.n);
 			step.data.solvingElement = {};
-			
+			step.data.anglePoint = {};
+			step.data.anglePoint.vector = util.generateArray(app.inputData.n, function(){
+				return null;
+			});
 			step.variables = step.data.lpp.fx.map(function(variable, index){
 				return {
 					name: variable.name,
@@ -41,13 +45,14 @@ angular.module("module.trainingState", ["module.fraction", "module.m"])
 
 
 			this.trainingSteps.push(step);
-			this.simplexTables.push(new SimplexMethod(app.inputData));
-
+			sm.next()
+			this.simplexTables.push(sm.clone());
+			// console.log("UUUUU", this.simplexTables[this.simplexTables.length - 1]);
 
 
 			console.log("app--trainingState", this);		
 
-			console.log(this);
+			console.log(this);	
 		};
 
 		this.compareAction = function(actual, expected){
@@ -119,6 +124,41 @@ angular.module("module.trainingState", ["module.fraction", "module.m"])
 		}
 
 		this.start = function(){
-			console.log("app--trainingState", app);		
+			var step = {
+				type: "first-simplex-table",
+				data: {}
+			};
+
+			step.data.lpp = generateEmptyLpp(app.inputData.m, app.inputData.n);
+			step.data.solvingElement = {};
+			step.data.anglePoint = {};
+			step.data.anglePoint.vector = util.generateArray(app.inputData.n, function(){
+				return null;
+			});
+			
+			step.variables = step.data.lpp.fx.map(function(variable, index){
+				return {
+					name: variable.name,
+					displayName: variable.name + (variable.index + 1),
+					index: variable.index
+				};
+			});
+
+			step.data.basis = step.variables.filter(function(item, index){
+				return index < app.inputData.m;
+			}).map(function(item, index){
+				item.limitation = index;
+				return item;
+			});
+
+
+			this.trainingSteps.push(step);
+			this.simplexTables.push(new SimplexMethod(app.inputData));
+
+
+
+			console.log("app--trainingState", this);		
+
+			console.log(this);		
 		};
 	}]);
