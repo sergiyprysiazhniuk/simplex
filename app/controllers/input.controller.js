@@ -42,7 +42,7 @@ angular.module("app")
 		}
 		if(!app.inputData.matrixB){
 			app.inputData.matrixB = util.generateArray(m, function(){
-				return new M(0);
+				return "";
 			});
 		}
 		if(!app.inputData.fx){

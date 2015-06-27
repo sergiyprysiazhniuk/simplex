@@ -19,41 +19,73 @@ angular.module("app")
 	
 	.controller("trainingCtrl",	[
 		"$scope",
+		"$http",
 		"trainingStateService",
 		"utilFactory",
 		"appStateService",
 		"mFactory",
 		"validateMessageService",
+		"lppImproverFactory",
 
-	    function($scope, training, util, app, mFactory, validation){
+	    function($scope, $http, training, util, app, mFactory, validation, lppImprover){
 	    	var m = app.inputData.m,
 				n = app.inputData.n,
 				previousStep = app.inputData;
 
+			console.log("training", training);
 
-	    	$scope.trainingSteps = training.trainingSteps;
+			$http.get('../data/training/hints.json').success(function(data){
+				$scope.hints = data;
+				console.log($scope.hints);
+			});
+
+
+	    	$scope.userSimplexTables = training.userSimplexTables;
 	    	$scope.simplexTables = training.simplexTables;
+
+	    	$scope.userImprovementSteps = training.userImprovementSteps;
+	    	$scope.improvementSteps = training.improvementSteps;
 
 	    	$scope.actions = [
 	    		{
+	    			type: "make-convenient",
+	    			text: "Привести задачу до зручного вигляду.",
+	    			category: "start"
+	    		},
+	    		{
+	    			type: "build-first-table",
+	    			text: "Задача має зручний вигляд. Побудувати першу симплекс-таблицю.",
+	    			category: "start make-convenient"
+	    		},
+	    		{
+	    			type: "continue-convenient",
+	    			text: "Продовжити приведення до зручного вигляду.",
+	    			category: "make-convenient"
+	    		},
+	    		{
 	    			type: "solved",
-	    			text: "Отримано розв'язок."
+	    			text: "Отримано розв'язок.",
+	    			category: "simplex-table"
 	    		},
 	    		{
 	    			type: "improvable",
-	    			text: "План можна покращити."
+	    			text: "План можна покращити.",
+	    			category: "simplex-table"
 	    		},
 	    		{
 	    			type: "not-limited-top",
-	    			text: "Задача немає розв'язку. Функція цілі необмежена ЗВЕРХУ."
+	    			text: "Задача немає розв'язку. Функція цілі необмежена ЗВЕРХУ.",
+	    			category: "simplex-table"
 	    		},
 	    		{
 	    			type: "not-limited-bottom",
-	    			text: "Задача немає розв'язку. Функція цілі необмежена ЗНИЗУ."
+	    			text: "Задача немає розв'язку. Функція цілі необмежена ЗНИЗУ.",
+	    			category: "simplex-table"
 	    		},
 	    		{
 	    			type: "empty-plural",
-	    			text: "Задача не має розв'язку. Множина припустимих роз'язків несумісна."
+	    			text: "Задача не має розв'язку. Множина припустимих роз'язків несумісна.",
+	    			category: "simplex-table"
 	    		}
 	    	];
 
@@ -174,6 +206,7 @@ angular.module("app")
 	    		// currentStep.matrixA.splice(0);
 	    		currentStep.lpp.matrixA = util.clone(previousStep.matrixA);
 	    		currentStep.lpp.matrixB = util.clone(previousStep.matrixB);
+	    		currentStep.lpp.fx = util.clone(previousStep.fx);
 	    		if(previousStep.matrixC){
 	    			currentStep.lpp.matrixC = util.clone(previousStep.matrixC);	
 	    		}	    		
@@ -215,6 +248,8 @@ angular.module("app")
 	    		}*/
 	    	};
 
+
+
 	    	$scope.confirmResult = function(){
 	    		this.step.expectedData = training.simplexTables[training.simplexTables.length - 1];
 	    		console.log("!!!confirmResult!!!", this);
@@ -228,23 +263,94 @@ angular.module("app")
 	    		});
 	    	};
 
-	    	/*$scope.confirmResult = function(){
-	    		console.log("!!!confirmResult!!!", this);
 
-	    	};*/
+	    	$scope.nextImprovement = function(){
+	    		var step;
 
-	    	$scope.changeHandler = function(){
-	    		// console.log("XXXXXXXXXXXXXXXXXXCCCCCCCCCCCCCCCCCVVVVVVVVVVVVVVVVVV");
+	    		previousStep = this.step.data.lpp;
+
+	    		if(lppImprover.isConvenientLpp(app.inputData)){
+	    			this.step.selectedIncorrectAction = this.step.nextAction !== "build-first-table";
+	    		}else{
+	    			this.step.selectedIncorrectAction = this.step.nextAction !== "continue-convenient";
+	    		}
+
+	    		if(!this.step.selectedIncorrectAction){
+	    			step = {
+	    				type: "improvement",
+	    				data: {}
+	    			};
+
+	    			console.log("PREVIOUS_STEP", previousStep);
+
+	    			step.data.lpp = training.generateEmptyLpp(previousStep.m, previousStep.n);
+	    			step.data.lpp.signs = util.clone(previousStep.signs);
+	    			step.data.lpp.extreme = previousStep.extreme;
+
+
+	    			training.userImprovementSteps.push(step);
+	    		}
 	    	};
 
-	    	/*function validate
 
-	    	$scope.$watchCollection('trainingSteps', function(){
-	    		console.log("XXXXXXXXXXXXXXXXXXCCCCCCCCCCCCCCCCCVVVVVVVVVVVVVVVVVV");
-	    	});*/
+	    	$scope.verifyStartAction = function(){
+	    		var step;
+	    		console.log("verifyStartAction", this.step.nextAction);
+	    		if(lppImprover.isConvenientLpp(app.inputData)){
+	    			this.step.selectedIncorrectAction = this.step.nextAction !== "build-first-table";
+	    		}else{
+	    			this.step.selectedIncorrectAction = this.step.nextAction !== "make-convenient";
+	    		}
+
+	    		if(!this.step.selectedIncorrectAction){
+	    			step = {
+	    				type: "improvement",
+	    				data: {}
+	    			};
+
+	    			step.data.lpp = training.generateEmptyLpp(app.inputData.m, app.inputData.n);
+	    			step.data.lpp.signs = util.clone(app.inputData.signs);
+	    			step.data.lpp.extreme = app.inputData.extreme;
+
+
+	    			training.userImprovementSteps.push(step);
+	    		}
+	    		console.log("verifyStartAction", this);
+	    	};
 
 	    	$scope.setLimitationIndex = function(context, index){
 	    		context.limitation = index;
+	    	};
+
+	    	function checkGoalFunctionExtereme(lpp){
+	    		var improved, notImproved;
+
+	    		console.log("checkGoalFunctionExtereme", lpp);
+
+	    		improved = app.inputData.fx.every(function(variable, index){
+	    			return variable.value.equalTo(lpp.fx[index].value.multiplyBy(-1));
+	    		});
+	    		notImproved = lpp.fx.every(function(variable, index){
+	    			return variable.value.equalTo(lpp.fx[index].value);
+	    		});
+
+	    		if(improved){
+	    			lpp.extreme = "min";
+	    		}else if(notImproved){
+	    			lpp.extreme = "max";
+	    		}
+
+	    		return improved;
+	    	}
+
+	    	$scope.showHint = function(){
+	    		checkGoalFunctionExtereme(this.step.data.lpp);
+
+	    		if(!lppImprover.isMinimized(this.step.data.lpp)){
+		    		validation.alert($scope.hints["goal-function-maximized"]);
+	    		}else if(!lppImprover.isPositiveAllFreeMembers(this.step.data.lpp)){
+		    		validation.alert($scope.hints["negative-free-members"]);	    			
+	    		}
 	    	};
 
 	    	$scope.start = function(){

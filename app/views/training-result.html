@@ -1,5 +1,69 @@
 <div id="training">
-	<div class="step" ng-repeat="step in trainingSteps">
+	<!-- <div class="step" ng-show="trainingStarted">
+			<select class="action-choice" ng-class="{mistake: step.selectedIncorrectAction}" ng-options="action.type as action.text for action in actions" ng-model="step.nextAction" ng-change="compareAction()">
+						<option value="">Виберіть дію</option>
+					</select>	
+		</div> -->	
+
+	<div class="step" ng-repeat="step in userImprovementSteps">
+		<div class="first-action-choice" ng-show="step.type === 'start'">
+			<select class="action-choice" ng-class="{mistake: step.selectedIncorrectAction}" ng-options="action.type as action.text for action in actions | filter:{category: 'start'}" ng-model="step.nextAction">
+					<!-- <option value="">Виберіть дію</option> -->
+			</select>
+			<button ng-click="verifyStartAction()">OK</button>
+		</div>
+		
+		<div ng-show="step.type === 'improvement'">
+			<div ng-repeat="row in step.data.lpp.matrixA">
+				<div>
+					<span ng-repeat="variable in row">
+						<input type="text"
+						ng-model="variable.value"
+						ng-init="variable.originalValue = variable.value.toString()"
+						ng-class="{mistake: variable.originalValue !== variable.value.toString()}"
+						m-format>
+						{{variable.name}}<sub>{{variable.index + 1}}</sub>
+					</span>
+					<select class="sign-choice" ng-options="sign as sign for sign in ['<', '>', '=']" ng-model="step.data.lpp.signs[$index]">
+					</select>
+					<input type="text"
+						ng-model="step.data.lpp.matrixB[$index]"
+						ng-init="originalValue = step.data.lpp.atrixB[$index].toString()"
+						m-format>
+				</div>				
+			</div>
+			<div>
+				<span>f(x)=</span>
+				<span ng-repeat="variable in step.data.lpp.fx">
+					<input type="text"
+						ng-model="variable.value"
+						ng-init="variable.originalValue = variable.value.toString()"
+						m-format>
+					{{variable.name}}<sub>{{variable.index + 1}}</sub>
+				</span>
+				<span> → min</span>
+			</div>			
+
+			<div class="actions">
+				<!-- <button ng-click="nextImprovement()">OK</button> -->
+				<button ng-click="showAddVariablePopup(step, row)">Додати змінну</button>
+				<button ng-click="showHint()">Підказка</button>
+				<button title="Заповнити систему обмежень даними з попереднього кроку" ng-click="autoComplete(step.data)">Автозаповнення</button>
+			</div>	
+
+			<div>
+				<select class="action-choice" ng-class="{mistake: step.selectedIncorrectAction}" ng-options="action.type as action.text for action in actions | filter:{category: 'make-convenient'}" ng-model="step.nextAction">
+						<!-- <option value="">Виберіть дію</option> -->
+				</select>
+				<button ng-click="nextImprovement()">OK</button>
+			</div>
+		</div>	
+
+
+	</div>
+
+
+	<div class="step" ng-repeat="step in userSimplexTables">
 		<div class="simplex-table">
 				<table>
 					<thead>
@@ -14,7 +78,7 @@
 					<tbody>
 						<tr ng-repeat="row in step.data.lpp.matrixA">
 							<td>
-								<select ng-class="{mistake: step.data.basis[$index].incorrect}" ng-options="item.displayName for item in step.variables | notSelectedVariables:step:$index" ng-model="step.data.basis[$index]" ng-change="setLimitationIndex(step.data.basis[$index], $index)">
+								<select ng-class="{mistake: step.data.basis[$index].incorrect}" ng-options="item.displayName for item in step.variables" ng-model="step.data.basis[$index]" ng-change="setLimitationIndex(step.data.basis[$index], $index)">
 							</td>
 							<td ng-repeat="variable in row"
 								ng-model="variable.value"
@@ -79,7 +143,8 @@
 						<label>Змінна, яка вводиться в базис</label>
 						<select ng-init="step.addedToBasis = (step.variables | notBasisVariables:step)[0]" ng-options="item.displayName for item in step.variables | notBasisVariables:step" ng-model="step.addedToBasis"></select>
 						</div>
-					</div>					
+					</div>
+					<button ng-hide="step.selectedIncorrectAction || !step.nextAction" ng-click="confirm()">OK</button>					
 				</div>
 
 				<div class="angle-point" ng-show="step.nextAction === 'solved' && !step.selectedIncorrectAction">

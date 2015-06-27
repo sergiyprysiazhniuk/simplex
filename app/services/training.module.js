@@ -11,8 +11,10 @@ angular.module("module.trainingState", ["module.fraction", "module.m"])
 	function(util, Variable, mFactory, SimplexMethod, lppImprover, resultAnalyzer, app){
 		var M = mFactory.M;
 
-		this.trainingSteps = [];
 		this.simplexTables = [];
+		this.userSimplexTables = [];
+		this.improvementSteps = [];
+		this.userImprovementSteps = [];
 		// this.currentSimplexTable;
 
 		this.next = function(){
@@ -22,7 +24,7 @@ angular.module("module.trainingState", ["module.fraction", "module.m"])
 			},
 			sm = this.simplexTables[this.simplexTables.length - 1];
 
-			step.data.lpp = generateEmptyLpp(app.inputData.m, app.inputData.n);
+			step.data.lpp = this.generateEmptyLpp(app.inputData.m, app.inputData.n);
 			step.data.solvingElement = {};
 			step.data.anglePoint = {};
 			step.data.anglePoint.vector = util.generateArray(app.inputData.n, function(){
@@ -44,7 +46,7 @@ angular.module("module.trainingState", ["module.fraction", "module.m"])
 			});
 
 
-			this.trainingSteps.push(step);
+			this.userSimplexTables.push(step);
 			sm.next()
 			this.simplexTables.push(sm.clone());
 			// console.log("UUUUU", this.simplexTables[this.simplexTables.length - 1]);
@@ -91,8 +93,11 @@ angular.module("module.trainingState", ["module.fraction", "module.m"])
 
     	};
 
-		function generateEmptyLpp(m, n){
+		this.generateEmptyLpp = function(m, n){
 			var lpp = {};
+
+			lpp.m = m;
+			lpp.n = n;
 
 			lpp.matrixA = util.generateArray(m, function(array){
 				return util.generateArray(n, function(array, index){
@@ -120,16 +125,29 @@ angular.module("module.trainingState", ["module.fraction", "module.m"])
 					})
 			});
 
+			lpp.signs = util.generateArray(m, function(){
+				return "";
+			});
+
 			return lpp;
-		}
+		};
 
 		this.start = function(){
+			this.userImprovementSteps.push({
+				type: "start"
+			});
+
+			// this.trainingStarted = true;
+			// this.buildFirstSimplexTable();
+		};
+
+		this.buildFirstSimplexTable = function(){
 			var step = {
 				type: "first-simplex-table",
 				data: {}
 			};
 
-			step.data.lpp = generateEmptyLpp(app.inputData.m, app.inputData.n);
+			step.data.lpp = this.generateEmptyLpp(app.inputData.m, app.inputData.n);
 			step.data.solvingElement = {};
 			step.data.anglePoint = {};
 			step.data.anglePoint.vector = util.generateArray(app.inputData.n, function(){
@@ -152,13 +170,13 @@ angular.module("module.trainingState", ["module.fraction", "module.m"])
 			});
 
 
-			this.trainingSteps.push(step);
+			this.userSimplexTables.push(step);
 			this.simplexTables.push(new SimplexMethod(app.inputData));
 
 
 
 			console.log("app--trainingState", this);		
 
-			console.log(this);		
+			console.log(this);
 		};
 	}]);

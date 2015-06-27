@@ -359,7 +359,12 @@ angular.module("module.lppImprover")
 	  		next: next,
 	  		getConvenienceLpp: getConvenienceLpp,
 	  		isConvenientLpp: isConvenientLpp,
-	  		addVariable: addVariable
+	  		addVariable: addVariable,
+	  		isMinimized: isMinimized,
+			isPositiveAllFreeMembers: isPositiveAllFreeMembers,
+			isAllEquations: isAllEquations,
+			isSingleBasisMatrix: isSingleBasisMatrix,
+			isPositiveAllVariables: isPositiveAllVariables
 	  	};
 	}]);
 

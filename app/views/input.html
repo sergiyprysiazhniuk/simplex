@@ -19,9 +19,9 @@
 			</tr>
 		</table>
 		<table class="matrix-b">
-			<tr ng-repeat="element in B">
+			<tr ng-repeat="element in B track by $index">
 				<td>
-					<input ng-model="element" m-format/>
+					<input ng-model="B[$index]" m-format/>
 				</td>
 			</tr>
 		</table>
