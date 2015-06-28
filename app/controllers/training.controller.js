@@ -268,9 +268,9 @@ angular.module("app")
 	    	$scope.nextImprovement = function(){
 	    		var step;
 
-	    		previousStep = this.step.data.lpp;
+	    		previousStep = util.clone(this.step.data.lpp);
 
-	    		if(lppImprover.isConvenientLpp(app.inputData)){
+	    		if(lppImprover.isConvenientLpp(previousStep)){
 	    			this.step.selectedIncorrectAction = this.step.nextAction !== "build-first-table";
 	    		}else{
 	    			this.step.selectedIncorrectAction = this.step.nextAction !== "continue-convenient";
@@ -278,18 +278,23 @@ angular.module("app")
 
 	    		if(!this.step.selectedIncorrectAction){
 	    			step = {
-	    				type: "improvement",
 	    				data: {}
 	    			};
-
-	    			console.log("PREVIOUS_STEP", previousStep);
 
 	    			step.data.lpp = training.generateEmptyLpp(previousStep.m, previousStep.n);
 	    			step.data.lpp.signs = util.clone(previousStep.signs);
 	    			step.data.lpp.extreme = previousStep.extreme;
 
+	    			console.log("this.step.nextAction", this.step.nextAction);
 
-	    			training.userImprovementSteps.push(step);
+	    			if(this.step.nextAction === "build-first-table"){
+	    				step.type = "first-simplex-table";
+	    				// training.userSimplexTables.push(new SimplexMethod(step.data.lpp));
+	    				training.buildFirstSimplexTable(previousStep);
+	    			}else if(this.step.nextAction === "continue-convenient"){
+	    				step.type = "improvement";
+						training.userImprovementSteps.push(step);
+	    			}
 	    		}
 	    	};
 
@@ -339,12 +344,16 @@ angular.module("app")
 		    			return variable.value.equalTo(lpp.fx[index].value);
 		    		});
 
-		    		if(improved){
-		    			lpp.extreme = "min";
-		    		}else if(notImproved){
-		    			lpp.extreme = "max";
-		    			currentHint = $scope.hints["goal-function-maximized"];
-		    		}
+		    		
+	    		}
+
+	    		console.log("improved/notImproved", improved, notImproved);
+
+	    		if(improved){
+	    			lpp.extreme = "min";
+	    		}else if(notImproved){
+	    			lpp.extreme = "max";
+	    			currentHint = $scope.hints["goal-function-maximized"];
 	    		}
 
 	    		return improved;
@@ -581,6 +590,7 @@ angular.module("app")
 					isFake: $scope.newVariable.type.type === "fake"
 				};
 
+				this.step.data.lpp.n++;
 				lppImprover.addVariable(this.step.data.lpp, $scope.newVariable.limitationIndex, options);
 
 				$scope.newVariable = {

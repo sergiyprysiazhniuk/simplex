@@ -37,6 +37,9 @@ angular.module("module.simplexMethod", [
 		};
 
 		SimplexMethod.prototype.getBasis = function(){	
+
+			console.log(this);
+
 			return this.lpp.matrixA.map(function(limitation, limitationIndex){
 				var variable = limitation.filter(function(limitationElement, elementIndex){
 						return limitationElement.value.equalTo(1) && !this._getMatrixAColumn(elementIndex).filter(function(item, index){
@@ -235,6 +238,12 @@ angular.module("module.simplexMethod", [
 				value = this.lpp.fx.reduce(function(sum, variable, index){
 					return sum.add(variable.value.multiplyBy(vector[index]));
 				}, new M(0));
+
+				/*value = this.matrixB.reduce(function(previous, current, index){
+					return current
+						.multiplyBy(fx[basis[index].basisVariable._index].value)
+				 		.add(previous); 
+				}, 0).subtract(this.anglePoint.value)*/
 
 			return {
 				value: value,

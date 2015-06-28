@@ -142,7 +142,8 @@ angular.module("module.lppImprover")
 
 				addStepInformation(lpp, 'limitations', 'subtract-equations-more-and-equal', saveState);
 
-				addFakeVariables(lpp, [markedLimitation], 1);
+				// addFakeVariables(lpp, [markedLimitation], 1);
+				addFakeVariables(lpp, equations, 1);
 
 				addStepInformation(lpp, 'limitations', 'add-fake-variables-more-and-equal', saveState);
 			}
@@ -360,6 +361,7 @@ angular.module("module.lppImprover")
 		}
 
 		function isPositiveAllVariables(lpp){
+			console.log("isPositiveAllVariables", lpp);
 			return lpp.notNegativeConditions.every(function(item){
 				return item;
 			});
