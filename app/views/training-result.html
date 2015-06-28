@@ -8,59 +8,95 @@
 	<div class="step" ng-repeat="step in userImprovementSteps">
 		<div class="first-action-choice" ng-show="step.type === 'start'">
 			<select class="action-choice" ng-class="{mistake: step.selectedIncorrectAction}" ng-options="action.type as action.text for action in actions | filter:{category: 'start'}" ng-model="step.nextAction">
-					<!-- <option value="">Виберіть дію</option> -->
+					<option style="display: none" value="">Виберіть дію</option>
 			</select>
 			<button ng-click="verifyStartAction()">OK</button>
 		</div>
 		
-		<div ng-show="step.type === 'improvement'">
-			<div ng-repeat="row in step.data.lpp.matrixA">
-				<div>
-					<span ng-repeat="variable in row">
+		<div class="improvement-training" ng-show="step.type === 'improvement'">
+
+			<div class="problem-container">
+				<div ng-repeat="row in step.data.lpp.matrixA">
+					<div>
+						<span ng-repeat="variable in row">
+							<input type="text"
+							ng-model="variable.value"
+							ng-init="variable.originalValue = variable.value.toString()"
+							m-format>
+							{{variable.name}}<sub>{{variable.index + 1}}</sub>
+						</span>
+						<select class="sign-choice" ng-options="sign as sign for sign in ['<', '>', '=']" ng-model="step.data.lpp.signs[$index]">
+						</select>
 						<input type="text"
-						ng-model="variable.value"
-						ng-init="variable.originalValue = variable.value.toString()"
-						ng-class="{mistake: variable.originalValue !== variable.value.toString()}"
-						m-format>
+							ng-model="step.data.lpp.matrixB[$index]"
+							ng-init="originalValue = step.data.lpp.atrixB[$index].toString()"
+							m-format>
+					</div>				
+				</div>
+				<div class="goal-function">
+					<span>f(x)=</span>
+					<span ng-repeat="variable in step.data.lpp.fx">
+						<input type="text"
+							ng-model="variable.value"
+							ng-init="variable.originalValue = variable.value.toString()"
+							m-format>
 						{{variable.name}}<sub>{{variable.index + 1}}</sub>
 					</span>
-					<select class="sign-choice" ng-options="sign as sign for sign in ['<', '>', '=']" ng-model="step.data.lpp.signs[$index]">
-					</select>
-					<input type="text"
-						ng-model="step.data.lpp.matrixB[$index]"
-						ng-init="originalValue = step.data.lpp.atrixB[$index].toString()"
-						m-format>
-				</div>				
+					<span> → min</span>
+				</div>	
 			</div>
-			<div>
-				<span>f(x)=</span>
-				<span ng-repeat="variable in step.data.lpp.fx">
-					<input type="text"
-						ng-model="variable.value"
-						ng-init="variable.originalValue = variable.value.toString()"
-						m-format>
-					{{variable.name}}<sub>{{variable.index + 1}}</sub>
-				</span>
-				<span> → min</span>
-			</div>			
+					
 
 			<div class="actions">
 				<!-- <button ng-click="nextImprovement()">OK</button> -->
-				<button ng-click="showAddVariablePopup(step, row)">Додати змінну</button>
+				<button ng-click="showAddVariablePopup()">Додати змінну</button>
 				<button ng-click="showHint()">Підказка</button>
 				<button title="Заповнити систему обмежень даними з попереднього кроку" ng-click="autoComplete(step.data)">Автозаповнення</button>
 			</div>	
 
-			<div>
+			<div class="next-action-choice">
 				<select class="action-choice" ng-class="{mistake: step.selectedIncorrectAction}" ng-options="action.type as action.text for action in actions | filter:{category: 'make-convenient'}" ng-model="step.nextAction">
 						<!-- <option value="">Виберіть дію</option> -->
+						<option style="display: none" value="">Виберіть наступну дію</option>
 				</select>
 				<button ng-click="nextImprovement()">OK</button>
 			</div>
 		</div>	
 
 
+		<div class="popup" ng-show="addVariablePopupActive">
+			<div class="content">
+				<ul>
+					<li>
+						<label>Тип змінної</label>
+						<select ng-init="step.data.solvingElement.rowIndex = rowIndexes[0].index" ng-options="item.index as (item.index + 1) for item in rowIndexes" ng-model="newVariable.limitationIndex">
+						</select>
+					</li>
+					<li>
+						<select class="var-info" ng-options="item.description for item in variableTypes" ng-model="newVariable.type">
+						</select>
+						<label>Тип змінної</label>
+					</li>
+					<li>
+						<input ng-model="newVariable.coeficient" type="text" class="var-info"/>
+						<label>Коефіцієнт</label>
+					</li>
+					<li>
+						<input type="text" class="var-info" ng-model="newVariable.name"/>
+						<label>Назва</label>
+					</li>
+					<li>
+						<input type="text" class="var-info" ng-model="newVariable.index"/>
+						<label>Індекс</label>
+					</li>
+				</ul>
+				<button ng-click="addVariable()">OK</button>
+				<button class="close-popup" ng-click="hideAddVariablePopup()"></button>
+			</div>
+		</div>
 	</div>
+
+	
 
 
 	<div class="step" ng-repeat="step in userSimplexTables">

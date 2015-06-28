@@ -307,6 +307,16 @@ angular.module("module.lppImprover")
 		}
 
 		function isConvenientLpp(lpp){
+			console.log("IS_CONVENIENT");
+			console.log("isMinimized", isMinimized(lpp));
+			console.log("isPositiveAllFreeMembers", isPositiveAllFreeMembers(lpp));
+			console.log("isAllEquations", isAllEquations(lpp));
+			console.log("isSingleBasisMatrix", isSingleBasisMatrix(lpp));
+			console.log("isPositiveAllVariables", isPositiveAllVariables(lpp));
+
+			console.log(lpp);
+
+
 			return isMinimized(lpp)
 					&& isPositiveAllFreeMembers(lpp)
 					&& isAllEquations(lpp)

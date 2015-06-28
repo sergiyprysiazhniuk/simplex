@@ -46,10 +46,6 @@ angular.module("app")
 					})
 			});
 			lpp.signs = util.generateArray(m, function(){
-				// var sign = signs[random(0, 2)];
-
-				// console.log(sign);
-
 				return "=";
 			});
 			lpp.notNegativeConditions = util.generateArray(n, function(){

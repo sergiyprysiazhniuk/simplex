@@ -64,8 +64,6 @@ angular.module("module.resultAnalyzer", ["module.util", "module.variable", "modu
 				return item.value;
 			});
 
-			console.log("WWWWWWWWWWWWWW", util.clone(anglePoint));
-
 			return util.clone(anglePoint);
 		}
 

@@ -30,7 +30,8 @@ angular.module("app")
 	    function($scope, $http, training, util, app, mFactory, validation, lppImprover){
 	    	var m = app.inputData.m,
 				n = app.inputData.n,
-				previousStep = app.inputData;
+				previousStep = app.inputData,
+				currentHint;
 
 			console.log("training", training);
 
@@ -323,35 +324,274 @@ angular.module("app")
 	    	};
 
 	    	function checkGoalFunctionExtereme(lpp){
-	    		var improved, notImproved;
+	    		var improved = true, notImproved;
 
-	    		console.log("checkGoalFunctionExtereme", lpp);
+	    		
 
-	    		improved = app.inputData.fx.every(function(variable, index){
-	    			return variable.value.equalTo(lpp.fx[index].value.multiplyBy(-1));
+	    		if(app.inputData.extreme === "max"){	    			
+		    		improved = app.inputData.fx.every(function(variable, index){
+		    			return variable.value.equalTo(lpp.fx[index].value.multiplyBy(-1));
+		    		});
+
+		    		console.log("checkGoalFunctionExtereme", improved);
+
+		    		notImproved = app.inputData.fx.every(function(variable, index){
+		    			return variable.value.equalTo(lpp.fx[index].value);
+		    		});
+
+		    		if(improved){
+		    			lpp.extreme = "min";
+		    		}else if(notImproved){
+		    			lpp.extreme = "max";
+		    			currentHint = $scope.hints["goal-function-maximized"];
+		    		}
+	    		}
+
+	    		return improved;
+	    	}
+
+	    	function containsAdditionalVariable(row){
+	    		return row.some(function(variable){
+	    			return variable.isAdditional;
 	    		});
-	    		notImproved = lpp.fx.every(function(variable, index){
-	    			return variable.value.equalTo(lpp.fx[index].value);
+	    	}
+
+	    	function containsFakeVariable(row){
+	    		return row.some(function(variable){
+	    			return variable.isFake;
+	    		});
+	    	}
+
+	    	function checkNegativeFreeMembers(lpp){
+	    		var isSourceHasNegativeFreeMembers,
+	    		 	negativeFreeMembersIndexes,
+	    		  	improved, 
+	    		  	notImproved,
+	    		  	signsReplaced;
+
+	    		negativeFreeMembersIndexes = app.inputData.matrixB.map(function(item, index){
+	    			return item.lessThan(0) ? index : -1;
+	    		}).filter(function(item){
+	    			return item > -1;
 	    		});
 
-	    		if(improved){
-	    			lpp.extreme = "min";
-	    		}else if(notImproved){
-	    			lpp.extreme = "max";
+	    		improved = negativeFreeMembersIndexes.every(function(item){
+			    			return app.inputData.matrixA[item].every(function(variable, index){
+			    				return variable.value.equalTo(lpp.matrixA[item][index].value.multiplyBy(-1));
+			    			});
+			    		});
+
+	    		improved = improved && negativeFreeMembersIndexes.every(function(item){
+	    			return app.inputData.matrixB[item].equalTo(lpp.matrixB[item].multiplyBy(-1));
+	    		});
+
+	    		if(!improved){
+	    			currentHint = $scope.hints["negative-free-members"] + $scope.hints["negative-free-members-multiply"];
+	    		}
+
+	    		signsReplaced = negativeFreeMembersIndexes.every(function(item){
+	    			if(app.inputData.signs[item] === ">"){
+	    				return lpp.signs[item] === "<";
+	    			}else if(app.inputData.signs[item] === "<"){
+	    				return lpp.signs[item] === ">";
+	    			}else if(app.inputData.signs[item] === "="){
+	    				return lpp.signs[item] === "=";
+	    			}
+	    		});
+
+	    		if(improved && !signsReplaced){
+	    			currentHint = $scope.hints["negative-free-members"] + $scope.hints["negative-free-members-sign"];
+	    		}
+
+	    		return improved && signsReplaced;
+	    	}
+
+	    	function isLimitationsHasEmptyCells(lpp){
+	    		var leftSideEmptyCells, rightSideEmptyCells;
+
+	    		leftSideEmptyCells = lpp.matrixA.some(function(row){
+	    			return row.some(function(cell){
+	    				return cell.value === "" || isNaN(cell.value.summand.numerator);
+	    			});
+	    		});
+
+	    		rightSideEmptyCells = lpp.matrixB.some(function(cell){
+	    			return cell === "" || isNaN(cell.summand.numerator);
+	    		});
+
+	    		return leftSideEmptyCells || rightSideEmptyCells;
+	    	}
+
+	    	function isGoalFunctionHasEmptyCells(lpp){
+	    		return lpp.fx.some(function(cell){
+	    			return cell.value === "" || isNaN(cell.value.summand.numerator);
+	    		});
+	    	}
+
+	    	function checkLimitationsLessEqual(lpp){
+				var isSourceHasNegativeFreeMembers,
+	    		 	lessEqualSignsIndexes,
+	    		  	improved, 
+	    		  	notImproved,
+	    		  	signsReplaced;
+
+	    		lessEqualSignsIndexes = app.inputData.signs.map(function(item, index){
+	    			return item === "<" ? index : -1;
+	    		}).filter(function(item){
+	    			return item > -1;
+	    		});
+
+	    		/*if(!lessEqualSignsIndexes.length){
+	    			return false;
+	    		}*/
+
+	    		improved = lessEqualSignsIndexes.every(function(item){
+			    			return app.inputData.matrixA[item].every(function(variable, index){
+			    				return variable.value.equalTo(lpp.matrixA[item][index]);
+			    			}) && containsAdditionalVariable(lpp.matrixA[item]);
+			    		});
+
+	    		if(!improved){
+	    			currentHint = $scope.hints["limitations-less"] + $scope.hints["limitations-less-variable"];
+	    		}
+
+	    		signsReplaced = lessEqualSignsIndexes.every(function(item){
+	    			if(app.inputData.signs[item] === "<"){
+	    				return lpp.signs[item] === "=";
+	    			}
+	    		});
+
+	    		if(improved && !signsReplaced){
+	    			currentHint = $scope.hints["limitations-less"] + $scope.hints["limitations-less-sign"];
+	    		}
+
+	    		return improved;
+	    	}
+
+	    	function checkEquations(lpp){
+	    		var equationsIndexes,
+	    		  	improved, 
+	    		  	notImproved,
+	    		  	signsReplaced;
+
+	    		equationsIndexes = app.inputData.signs.map(function(item, index){
+	    			return item === "=" ? index : -1;
+	    		}).filter(function(item){
+	    			return item > -1;
+	    		});
+
+	    		console.log("checkEquations", equationsIndexes);
+
+	    		if(!equationsIndexes.length){
+	    			return false;
+	    		}
+
+	    		improved = equationsIndexes.every(function(item){
+			    			return app.inputData.matrixA[item].every(function(variable, index){
+			    				return variable.value.equalTo(lpp.matrixA[item][index]);
+			    			}) && containsFakeVariable(lpp.matrixA[item]);
+			    		});
+
+	    		console.log("checkEquations", improved);
+
+	    		if(!improved){
+	    			currentHint = $scope.hints["equations"];
 	    		}
 
 	    		return improved;
 	    	}
 
 	    	$scope.showHint = function(){
-	    		checkGoalFunctionExtereme(this.step.data.lpp);
+	    		var lpp = this.step.data.lpp;
 
-	    		if(!lppImprover.isMinimized(this.step.data.lpp)){
-		    		validation.alert($scope.hints["goal-function-maximized"]);
-	    		}else if(!lppImprover.isPositiveAllFreeMembers(this.step.data.lpp)){
-		    		validation.alert($scope.hints["negative-free-members"]);	    			
+	    		if(isLimitationsHasEmptyCells(lpp)){
+	    			validation.alert("Система обмежень має порожні клітинки. Заповніть їх щоб продовжити.");
+	    			return;
 	    		}
+	    		if(isGoalFunctionHasEmptyCells(lpp)){
+	    			validation.alert("Функція цілі має порожні клітинки. Заповніть їх щоб продовжити.");
+	    			return;
+	    		}
+
+				if(!checkGoalFunctionExtereme(lpp)){
+					validation.alert(currentHint);
+					return;
+				}
+
+				if(!checkNegativeFreeMembers(lpp)){
+					validation.alert(currentHint);
+					return;
+				}
+
+				if(!checkLimitationsLessEqual(lpp)){
+					validation.alert(currentHint);
+					return;
+				}
+
+				if(!checkEquations(lpp)){
+					validation.alert(currentHint);
+					return;
+				}
+
+				// checkNegativeFreeMembers(lpp);
+	    		
+				
+	    		/*if(!lppImprover.isMinimized(lpp)){
+		    		validation.alert($scope.hints["goal-function-maximized"]);
+	    		}else if(!lppImprover.isPositiveAllFreeMembers(lpp)){
+		    		validation.alert($scope.hints["negative-free-members"]);	    			
+	    		}*/
 	    	};
+
+			$scope.variableTypes = [
+				{
+					type: "additional",
+					description: "Додаткова"
+				},
+				{
+					type: "fake",
+					description: "Штучна"
+				},
+				{
+					type: "ordinary",
+					description: "Звичайна"
+				}
+			];
+
+			$scope.newVariable = {
+				type: $scope.variableTypes[0],
+				coeficient: 1,
+				name: "x"
+			};
+
+			$scope.showAddVariablePopup = function(){
+	    		// console.log("showAddVariablePopup", this);
+				// $scope.currentStep = step;
+				$scope.newVariable.index = parseInt(this.step.data.lpp.n) + 1;
+				$scope.addVariablePopupActive = true;				
+			};
+
+			$scope.addVariable = function(){
+				var options = {
+					value: $scope.newVariable.coeficient,
+					name: $scope.newVariable.name,
+					index: $scope.newVariable.index - 1,
+					_index: this.step.data.lpp.n,
+					isAdditional: $scope.newVariable.type.type === "additional",
+					isFake: $scope.newVariable.type.type === "fake"
+				};
+
+				lppImprover.addVariable(this.step.data.lpp, $scope.newVariable.limitationIndex, options);
+
+				$scope.newVariable = {
+					type: $scope.variableTypes[0],
+					coeficient: 1,
+					name: "x"
+				}
+				$scope.addVariablePopupActive = false;	
+			};
+
+			
 
 	    	$scope.start = function(){
 				training.start();

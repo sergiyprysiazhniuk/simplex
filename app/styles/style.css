@@ -30,8 +30,8 @@ body{
 }
 #data, #result{
     padding-top: 10px;
-    width: 760px;
-    margin: 20px auto;
+    min-width: 760px;
+    margin: 20px 5%;
     /* text-align: center; */
     border: 1px solid #868686;
     border-radius: 4px;
