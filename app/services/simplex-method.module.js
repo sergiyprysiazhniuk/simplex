@@ -38,7 +38,7 @@ angular.module("module.simplexMethod", [
 
 		SimplexMethod.prototype.getBasis = function(){	
 
-			console.log(this);
+			// console.log(this);
 
 			return this.lpp.matrixA.map(function(limitation, limitationIndex){
 				var variable = limitation.filter(function(limitationElement, elementIndex){

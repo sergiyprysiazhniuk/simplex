@@ -23,8 +23,9 @@ angular.module("app")
 		 "mFactory",
 		 "simplexMethodFactory",
 		 "lppImproverFactory",
+		 "validateMessageService",
 		 "utilFactory",
-	 function($scope, $http, $location, app, training, Variable, mFactory, SimplexMethod, lppImprover, util){
+	 function($scope, $http, $location, app, training, Variable, mFactory, SimplexMethod, lppImprover, validation, util){
 		var m = app.inputData.m,
 			n = app.inputData.n,
 			M = mFactory.M;
@@ -101,13 +102,41 @@ angular.module("app")
 			}
 		};
 
-		/*function util.generateArray(length, callback){
-			var array = [], i;
+		$scope.lppName = "";
 
-			for (i = 0; i < length; i++) {
-				array.push(callback && callback(array[i], i, array));
-			};
+		$scope.save = function(){
+			$scope.saveData = util.clone(app.inputData),
+				properties = ["name", "m", "n", "extreme", "matrixA", "matrixB", "fx", "signs", "notNegativeConditions", "extreme"];
 
-			return array;
-		}*/
+			$scope.saveData.matrixA = $scope.saveData.matrixA.map(function(row){
+				return row.map(function(item){
+					return item.value.toString() || 0;
+				});
+			});
+
+			$scope.saveData.matrixB = $scope.saveData.matrixB.map(function(item){
+				return item.toString() || 0;
+			});
+
+			$scope.saveData.fx = $scope.saveData.fx.map(function(item){
+				return item.value.toString() || 0;
+			});
+
+			$scope.saveDialogVisible = true;
+		};
+
+		$scope.confirm = function(){
+			$scope.saveData.name = $scope.lppName;
+			$scope.saveDialogVisible = false;
+
+			$http.post('/save', {
+					data: JSON.stringify($scope.saveData, properties)
+				}).
+				success(function() {
+					validation.alert("Умову задачі збережено.");
+				}).
+				error(function() {
+					validation.alert("Помилка при збереженні умови задачі.");
+				});
+		}
 	}]);

@@ -1,4 +1,3 @@
-<!-- <div id="data"> -->
 	<h3>Система обмежень.</h3>
 	
 	<div class="input-limitations">
@@ -60,4 +59,11 @@
 	</div>
 
 	<button ng-click="next()">Далі</button>
-<!-- </div> -->
+	<button class="save-button" ng-click="save()">Зберегти</button>
+
+<div class="alert" ng-class="{show: saveDialogVisible}">
+	<div class="alert-message">
+		<input type="text" ng-model="lppName" placeholder="Введіть назву">
+		<button class="alert-close" ng-click="confirm()">OK</button>
+	</div>		
+</div>

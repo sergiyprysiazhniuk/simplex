@@ -64,12 +64,12 @@
 		</div>	
 
 
-		<div class="popup" ng-show="addVariablePopupActive">
+		<div class="popup" ng-show="step.addVariablePopupActive">
 			<div class="content">
 				<ul>
 					<li>
-						<label>Тип змінної</label>
-						<select ng-init="step.data.solvingElement.rowIndex = rowIndexes[0].index" ng-options="item.index as (item.index + 1) for item in rowIndexes" ng-model="newVariable.limitationIndex">
+						<label>Номер обмеження</label>
+						<select class="var-info" ng-init="newVariable.limitationIndex = rowIndexes[0].index" ng-options="item.index as (item.index + 1) for item in rowIndexes" ng-model="newVariable.limitationIndex">
 						</select>
 					</li>
 					<li>
@@ -152,9 +152,13 @@
 					</tbody>
 				</table>
 
-				<button title="Заповнити таблицю даними з попереднього кроку" ng-click="autoComplete(step.data)">Автозаповнення</button>
+				<div class="actions">
+					<button ng-click="showHintForSimplexTable()">Підказка</button>
+					<button title="Заповнити таблицю даними з попереднього кроку" ng-click="autoComplete(step.data)">Автозаповнення</button>
+					<!-- <button ng-click="checkSimplexTable()">OK</button> -->
+				</div>
 
-				<select class="action-choice" ng-class="{mistake: step.selectedIncorrectAction}" ng-options="action.type as action.text for action in actions" ng-model="step.nextAction" ng-change="compareAction()">
+				<select class="action-choice" ng-class="{mistake: step.selectedIncorrectAction}" ng-options="action.type as action.text for action in actions | filter:{category: 'simplex-table'}" ng-model="step.nextAction" ng-change="compareAction()">
 					<option value="">Виберіть наступну дію</option>
 				</select>
 				<div class="next-table-options" ng-show="step.nextAction === 'improvable' && !step.selectedIncorrectAction">

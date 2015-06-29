@@ -10,7 +10,9 @@
     "url": "https://github.com/sergiyprysiazhniuk/simplex.git"
   },
   "dependencies": {
+    "body-parser": "^1.13.1",
     "connect": "^3.3.5",
+    "express": "^4.13.0",
     "serve-static": "^1.9.2"
   }
 }

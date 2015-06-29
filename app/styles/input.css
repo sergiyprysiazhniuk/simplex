@@ -33,3 +33,12 @@
 #data table{
 	margin: 0 auto;
 }
+#data .save-button{
+    position: absolute;
+    bottom: 0px;
+    right: 15px;
+}
+#data .alert input{
+    width: 200px;
+    text-align: left;
+}

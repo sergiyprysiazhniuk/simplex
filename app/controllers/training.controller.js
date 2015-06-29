@@ -213,9 +213,15 @@ angular.module("app")
 	    		}	    		
 	    	};
 
+
+
 	    	$scope.confirm = function(){
 	    		console.log("step", this);
 				
+				if(isSimplexTableHasEmptyCells(this.step.data.lpp)){
+					validation.alert("Заповніть всі клітинки симплекс-таблиці.");
+					return;
+				}
 				// validation.alert("Заповніть всі клітинки симплекс-таблиці.");
 
 
@@ -318,8 +324,13 @@ angular.module("app")
 	    			step.data.lpp.signs = util.clone(app.inputData.signs);
 	    			step.data.lpp.extreme = app.inputData.extreme;
 
-
-	    			training.userImprovementSteps.push(step);
+	    			if(this.step.nextAction === "build-first-table"){
+	    				step.type = "first-simplex-table";
+	    				training.buildFirstSimplexTable(previousStep);
+	    			}else if(this.step.nextAction === "make-convenient"){
+	    				step.type = "improvement";
+						training.userImprovementSteps.push(step);
+	    			}
 	    		}
 	    		console.log("verifyStartAction", this);
 	    	};
@@ -331,23 +342,16 @@ angular.module("app")
 	    	function checkGoalFunctionExtereme(lpp){
 	    		var improved = true, notImproved;
 
-	    		
-
 	    		if(app.inputData.extreme === "max"){	    			
 		    		improved = app.inputData.fx.every(function(variable, index){
 		    			return variable.value.equalTo(lpp.fx[index].value.multiplyBy(-1));
 		    		});
 
-		    		console.log("checkGoalFunctionExtereme", improved);
-
 		    		notImproved = app.inputData.fx.every(function(variable, index){
 		    			return variable.value.equalTo(lpp.fx[index].value);
 		    		});
-
-		    		
 	    		}
 
-	    		console.log("improved/notImproved", improved, notImproved);
 
 	    		if(improved){
 	    			lpp.extreme = "min";
@@ -413,6 +417,19 @@ angular.module("app")
 	    		}
 
 	    		return improved && signsReplaced;
+	    	}
+
+	    	function isSimplexTableHasEmptyCells(lpp){
+
+	    		console.log("isSimplexTableHasEmptyCells", lpp);
+	    		var matrixCEmptyCells,
+	    			anglePointEmpty = lpp.anglePoint && (lpp.anglePoint.value === "" || isNaN(lpp.anglePoint.value));
+
+	    		matrixCEmptyCells = lpp.matrixC.some(function(cell){
+	    			return cell === "" || isNaN(cell.summand.numerator);
+	    		});
+
+	    		return matrixCEmptyCells || anglePointEmpty || isLimitationsHasEmptyCells(lpp);
 	    	}
 
 	    	function isLimitationsHasEmptyCells(lpp){
@@ -510,6 +527,13 @@ angular.module("app")
 	    		return improved;
 	    	}
 
+	    	$scope.showHintForSimplexTable = function(){
+	    		if(isSimplexTableHasEmptyCells(this.step.data.lpp)){
+					validation.alert("Заповніть всі клітинки симплекс-таблиці.");
+					return;
+				}
+	    	};
+
 	    	$scope.showHint = function(){
 	    		var lpp = this.step.data.lpp;
 
@@ -542,14 +566,12 @@ angular.module("app")
 					return;
 				}
 
-				// checkNegativeFreeMembers(lpp);
-	    		
-				
-	    		/*if(!lppImprover.isMinimized(lpp)){
-		    		validation.alert($scope.hints["goal-function-maximized"]);
-	    		}else if(!lppImprover.isPositiveAllFreeMembers(lpp)){
-		    		validation.alert($scope.hints["negative-free-members"]);	    			
-	    		}*/
+				if(lppImprover.isConvenientLpp(lpp)){
+					currentHint = $scope.hints["convenient"];
+					validation.alert(currentHint);
+					return;
+				}
+
 	    	};
 
 			$scope.variableTypes = [
@@ -574,10 +596,14 @@ angular.module("app")
 			};
 
 			$scope.showAddVariablePopup = function(){
-	    		// console.log("showAddVariablePopup", this);
-				// $scope.currentStep = step;
+				console.log(this);
 				$scope.newVariable.index = parseInt(this.step.data.lpp.n) + 1;
-				$scope.addVariablePopupActive = true;				
+				this.step.addVariablePopupActive = true;				
+			};
+
+			$scope.hideAddVariablePopup = function(){
+				// $scope.newVariable.index = parseInt(this.step.data.lpp.n) + 1;
+				this.step.addVariablePopupActive = false;				
 			};
 
 			$scope.addVariable = function(){
@@ -598,7 +624,7 @@ angular.module("app")
 					coeficient: 1,
 					name: "x"
 				}
-				$scope.addVariablePopupActive = false;	
+				this.step.addVariablePopupActive = false;	
 			};
 
 			

@@ -118,3 +118,7 @@
     border-radius: 4px;
     background: rgba(0, 0, 0, 0.02);
 }
+
+#training .simplex-table .action-choice{
+    margin-top: 20px;
+}

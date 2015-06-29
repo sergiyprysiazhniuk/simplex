@@ -18,7 +18,7 @@ angular.module("app")
 		    return Math.round(Math.random() * (to - from) + from);
 		}
 
-	 	function generateLpp(n, m){
+	 	function generateLpp(m, n){
 	 		var lpp = {},
 	 			signs = ["<", "=", ">"];
 
@@ -46,7 +46,7 @@ angular.module("app")
 					})
 			});
 			lpp.signs = util.generateArray(m, function(){
-				return "=";
+				return "<";
 			});
 			lpp.notNegativeConditions = util.generateArray(n, function(){
 				return true;
@@ -60,15 +60,22 @@ angular.module("app")
 		function solve(inputData){
 			var timeStart = Date.now(), timeEnd, i = 0;
 
-			console.log("Start: ", inputData.m, inputData.n);
+			// console.log("Start: ", inputData.m, inputData.n);
+
+			// console.log("IMPROVED", util.clone(lppImprover.getConvenienceLpp(inputData)));
 
 			var sm = new SimplexMethod(lppImprover.getConvenienceLpp(inputData)),
 			 prev, isCycle, timeDiff, status;
 
+			 // console.log(sm.clone());
+
 			while(sm.isImprovable()){
-				prev = sm.anglePoint.value;
+				// prev = util.clone(sm.anglePoint.value);
 				sm.next();
-				if(!sm.anglePoint.value.lessEqualThan(prev)){
+				if(sm.anglePoint.value.moreThan(prev)){
+					// console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+					// console.log(sm.clone());
+					// console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 					isCycle = true;
 					break;
 				}
@@ -83,7 +90,7 @@ angular.module("app")
 			status = !isCycle ? "solved" : "cycle"
 
 			console.log("Solved after: ", timeDiff / 1000, "s; Iterations: " + i + "; Status: " + status);
-			// console.log(sm);
+			console.log(sm);
 
 			return {
 				status: status,
@@ -117,7 +124,7 @@ angular.module("app")
 			for (var i = min; i <= max; i+=2) {
 				cycles = 0, time = 0;
 				for (var j = 1; j <= count; j++) {
-					lpp = generateLpp(i, i);
+					lpp = generateLpp(20, i);
 					result = solve(lpp);
 
 					if(result.status === "cycle"){
@@ -128,7 +135,7 @@ angular.module("app")
 				};		
 
 				$scope.iterations.push({
-						size: i,
+						size: "20x" + i,
 						time: parseFloat(((time / (count - cycles)) / 1000).toFixed(5)),
 						cycles: (cycles / count) * 100
 					});		

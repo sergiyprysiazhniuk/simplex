@@ -1,10 +1,15 @@
-var fs=require('fs'),
-	connect = require('connect'),
-	serveStatic = require('serve-static');
+var fs=require('fs');
+var bodyParser = require('body-parser');
+var express = require('express');
+var app = express();
 
-var app = connect();
 
-app.use('/problems-list', function(req, res, next) {
+app.use(bodyParser.json());       
+app.use(bodyParser.urlencoded({     
+  extended: true
+})); 
+
+app.get('/problems-list', function(req, res, next) {
 	var path = "app/data/tasks/",
 		data = [];
 
@@ -20,4 +25,15 @@ app.use('/problems-list', function(req, res, next) {
 	});
 });
 
-app.use(serveStatic(__dirname + '/app')).listen(3001);
+app.post('/save', function(req, res, next) {
+	fs.writeFileSync("app/data/tasks/" + Date.now() + ".json", req.body.data);
+	res.statusCode = 200;
+	res.end();
+	next();
+});
+
+app.use(express.static('app'));
+
+app.listen(3001);
+
+console.log("Server started on port 3001");
